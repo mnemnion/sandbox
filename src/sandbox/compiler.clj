@@ -23,14 +23,23 @@
 ;
 ; when the handler runs out of cdr, it returns the state. 
 (def i-am-q "queue")
-(defmacro build-fn-lets [fn-name args lets & body]
-        `(defn ~fn-name [~@args]
-           (let [~@lets]
+(def snippet (def-rule-fn (println (str state key) i-am-q)))
+
+(def test-rule
+     (def-rule-fn
+       (println "State! " (str state))
+       (println "Key! " (str key))
+       (println "Root! " (str root))
+       (println "Cdr! " (str cdr))))
+                                   
+(defmacro def-rule-fn [& body]  
+        `(fn [~'key ~'state ~'root ~'cdr]
+           (let [~'local-state ~'state]
            (println "Calling ...")
-           ~@body)))    
-(defn a-stupid-function
-  "I am stupid"[]
-  (println i-am-q))           
+          
+           ~@body
+           (inc ~'local-state))))    
+                      
            
-(defn defhandler [fn-name lets & body]
+#_(defn defhandler [fn-name lets & body]
           (build-fn-lets fn-name [name] (interleave lets lets) body ))
