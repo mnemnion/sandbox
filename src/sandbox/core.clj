@@ -2,13 +2,16 @@
   (:use     [clojure.repl]
    :use [monger.collection :only [insert insert-batch find-one-as-map find-maps]])
   (:require [monger.core :as mg]
+            [net.cgrand.enlive-html :as html]
             [rhizome.viz :refer [view-tree]]
             [me.raynes.conch :refer [programs with-programs let-programs]]
             [clojure.string :refer [split upper-case]]
-            [instaparse.core :refer [parser parse parses]])
+            [instaparse.core :refer [parser parse parses]]
+                                    )
   (:import [com.mongodb MongoOptions ServerAddress]
            [org.bson.types ObjectId]
-           [com.mongodb DB WriteConcern]))
+           [com.mongodb DB WriteConcern]
+           [java.net.URL]))()
 
 (defn fire-up-mongo []
   (do (programs mongod)
@@ -31,29 +34,63 @@
       "instaparser for JSON"
       (parser (slurp "json.grammar") :output-format :enlive))
               
-(def make-tree
+(def make-tree "simple tree parser" (parser "tree: node* node: leaf | <'('> node (<'('> node <')'>)* node* <')'> leaf: #'a+' "))
+
+
+(def make-tree-enlive
      "simple tree parser"
      (parser "tree: node* 
               node: leaf | <'('> node (<'('> node <')'>)* node* <')'> 
               leaf: #'a+'
-              "))
+              " :output-format :enlive))
               
-(def a-tree (make-tree "aaaa(aaaa(aaa(aa)aa)aaa)aaaaa"))  
               
-(defn- acceptable? [node]
-       (not (keyword? node)))
-              
-(defn- seq-for-labels [tree]
-            (filter acceptable? tree))
+(def a-tree (make-tree "aaaa(aaaa(aaa(aa)aa)aaa)aaaaa" :output-format :enlive) )  
               
 (defn tree-viz 
-    "visualize instaparse hiccup output as a rhizome graph" 
-    [tree]
-    (view-tree sequential? seq-for-labels tree 
-               :node->descriptor (fn [n] {:label (if (vector? n) 
+    "visualize instaparse hiccup output as a rhizome graph"
+    [mytree]
+    (view-tree sequential? rest mytree 
+               :node->descriptor (fn [n] {:label (if (coll? n) 
                                                      (first n) 
                                                      (when (string? n) n ))})))
 
-(tree-viz a-tree)
+(defn enlive-seq
+  [tree]
+  (if (map? tree)          
+      (:content tree)
+      (first tree)))
+
+(defn- kids? [node]
+  (not (= nil (:content node))))
+
+(defn e-tree-viz
+  "visualize enlive trees"
+  [mytree]
+  (view-tree kids? enlive-seq mytree 
+             :node->descriptor (fn [n] 
+                                 {:label (if (string? n)
+                                             n
+                                             (:tag n))})))
+             
+#_(tree-viz a-tree)
+
+
+(defn a-func
+  "a rule handler"
+	[rule cdr state x]
+	(let [local-state state] 
+	  (println x)
+	  local-state))
+
+(def x 12)
+
+(defn plusfive
+  "plus 5"
+  [y]
+  (let [x x]  
+  (+ 5 x y)))
+     
+   
 
 
