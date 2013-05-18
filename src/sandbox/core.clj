@@ -46,7 +46,9 @@
               
               
 (def a-tree (make-tree "a(a)a" ))
-(def e-tree (make-tree-enlive "a(a)a" ))                      
+(def e-tree (make-tree-enlive "a(a)a" ))
+                              
+(def a-longer-e-tree (make-tree-enlive "aaaaa(aaaa(aaa(aaa)aa)aa)aaaa"))
               
 (defn tree-viz 
     "visualize instaparse hiccup output as a rhizome graph"
