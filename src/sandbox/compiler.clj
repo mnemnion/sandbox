@@ -27,7 +27,7 @@
        (println "Keyword! " (str rule-key))
        (println "State! " (str state))
        (println "Root! " (str (:tag root)))
-       (println "Cdr! " (str (first cdr)))
+       (println "Cdr! " (apply str cdr))
                           (inc state)))
                              
 (def test-rule-map
@@ -36,13 +36,18 @@
       :leaf test-rule})
                              
 (defn aacc-looper
-
-   [tree seq-tree rule-map state & args] ;ignore my nil side-effect from println etc
-   (if (< state 3)
-       (recur tree (rest seq-tree) rule-map (inc state) (println (str (first seq-tree))))
+   [tree seq-tree rule-map state] ;ignore my nil side-effect from println etc
+   (if (and (< state 10) (coll? (:content (first seq-tree))))
+       (recur tree (rest seq-tree) rule-map (((:tag (first seq-tree)) rule-map) (:tag (first tree)) state tree seq-tree))
        (println (str "sez: " state))))
+                     
+(defn minimal-looper
+  [seq-tree state & args]
+  (if (< state 3)
+      (recur (rest seq-tree) (inc state) (println "seq-tree:\n\n" (apply str seq-tree)))
+      (println "sez " state)))
 
-#_(((:tag (first seq-tree)) rule-map) (:tag (first seq-tree)) state tree seq-tree)
+
 
 (defn aacc
   "actually a compiler compiler
