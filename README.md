@@ -1,31 +1,56 @@
-# mnemnion.core/emojure
+# instaparse.aacc
 
-A Clojure library for using emoji in Clojure code. Yes, this works. The challenge is editing and viewing the resulting code. 
+Actually A Compiler Compiler. A backend to Instaparse that lets you do arbitrary things to a parse tree. 
+
+yacc, and instaparse, are not compiler compilers. yacc is a parser compiler, and hence a parser parser; instaparse is in that family, but Clojurian, and delectably lexer free.
+
+aacc extends that flexibility, allowing a single-pass, rule-driven walk through a parse tree.
 
 ##Usage
 
+aacc takes a map of keywords to functions defined using the def-rule-fn macro. The keywords correspond to instaparse rule names; __add__ optionally, a map of literal tokens to rules may also be provided. __add__
+
+aac is called like this:
+
 ```clojure
-(🌍 #(+ (🎲 6) %1) [3 3 3])
-(3 7 8) ;sample output
+(aacc state tree)
+;or
+(aacc state tree rule-map)
+;or ---tba---
+(aacc state tree rule-map token-map)
 ```
 
-## Compatibility
+'state' is a map, which is initialized with the rule map as the value of a **:rule-map** key. **:token-map** may be added to state as well; the 3 and 4 argument forms push the maps into state before beginning the seq.
 
-As far as I know, Emojure is compatible with Clojure generally. That is, code will execute correctly, provided some intermediate representation doesn't munge it. Whether you can meaningfully edit it is a different story. 
+The variable order allows a convenient definition for a compiler function:
 
-Emojure is visible in Sublime Text 2 running Mac OS X. It is also tested (and works) on Catnip IDE running on the latest build of Firefox.
+```clojure
+(def compiler (partial aacc {:rule-map rule-map}))
+(compiler some-instaparse-tree)
+```
 
-Catnip has a bug under Safari where the buffer won't scroll down; this is unrelated to emojure, and Safari is not a supported platform for Catnip, so unless someone (maybe me) figures out how to fix this, Sublime Text is the best way to edit Emojure code. The problem is probably in ace editor, if someone really wants to chase it down. 
+Which, when called on a tree, compiles it. Whether this is true compilation or interpretation depends on whether the focus is on side effects or on the contents of state.
 
-Emoji are displayed as the box character under Chrome, and until the buggy UCS-16 of the underlying Javascript engine gets patched or replaced, that's just how it is. 
+##Behavior
 
-Important note: The Mac version of Emacs does not show anything at all for emoji, at the present time. This is an unfortunate state of affairs and a potential security risk. At minimum, a code editor should display the 'character not found' box when it is unable to render a printing character, or indeed, one may argue, a non-printing one. 
+aacc recursively walks the parse tree, repeatedly calling the rule functions. Rule functions have convenient access to four magic variables: **state**, **rule-key**, **root**, and **seq-tree**. the **rule-key** is the keyword which called the rule, **root** is the entire tree, and **seq-tree** is a sequence of the remaining tree to be walked. 
 
-If your environment doesn't support Emojure, encourage them to fix this. Emoji is in the Unicode standard now, like it or not, and needs to be supported.
+**(rest seq-tree)** will give you the next node on the tree, as expected. 
 
-Think of emojure as a spice that you add at the end of cooking your code; it adds piquancy and a hint of color. 
+All rule functions are expected to return state, in a useful fashion.
 
+state contains everything but the seq-tree, which ensures that aacc will exit unless a subrule contains an infinite loop. this means the value of **root**, **rule-map** and **token-map** may be dynamically changed by modifying the bindings of **:root-tree**, **:rule-map** or **:token-map** within the state map. 
 
+aacc will exit immediately if the returned state map contains a value for the keyword **:stop**. **:error** is probably a good place to put things that go wrong, and **:warning** might be a nice location for warnings. 
+
+**:stop**, **:root-tree**, **:rule-map**, **:token-map**, and **:error** are the only magic values in state. Modifying the value of **:root-tree** will not change the underlying tree-seq, which is baked at compile time and will walk the entire tree exactly once. Changing the mapping of **:root-tree** modifies any rule-based use of **root** subsequent to the change, but will not affect aacc's function directly. 
+
+If the rule map does not contain a particular keyword, the default rule, **instaparse.aacc/default-rule**, is used. It returns state, doing nothing further. Literal tokens that are not matched by the token map call **instaparse.aacc/default-token-rule**. Both of these may be over-ridden if necessary, in the following fashion:
+
+```clojure
+(alter-var-root #'instaparse.aacc/default-rule (constantly new-rule))
+```
+Where new-rule should be created with the def-rule-fn macro or provide the same magic variables. 
 
 ## License
 
