@@ -10,8 +10,7 @@
 (defn- e-tree-seq 
   "tree-seqs enlive trees, at least instaparse ones"
   [e-tree]
-  (tree-seq (comp seq :content) :content e-tree))
-  
+  (tree-seq (comp seq :content) :content e-tree))  
                  
 (def ^:private test-rule
      (def-rule-fn
@@ -20,10 +19,7 @@
        (println "Root! " (str (:tag root)))
        (println "Contents! " (apply str (:content (first seq-tree))))                              
        (println "Seq Tree! " (apply str seq-tree))
-                          (assoc state :count (inc (:count state)))))
-                       
-
-                                                                
+                          (assoc state :count (inc (:count state)))))  
         
 (def ^:private test-rule-map
      {:tree test-rule
@@ -52,12 +48,13 @@
            default-rule)))
                              
 (defn aacc-looper
-   [tree seq-tree state] 
+   [state seq-tree] 
+   (let [tree (:root-tree state)]
    (if (coll? (:content (first seq-tree)))
-       (recur tree (rest seq-tree) ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state tree seq-tree))
+       (recur ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state tree seq-tree) (rest seq-tree)) 
        (if (seq seq-tree)
-           (recur tree (rest seq-tree) (literal-token-rule :aaac-key-for-string state tree seq-tree))
-             state)))
+           (recur (literal-token-rule :aaac-key-for-string state tree seq-tree) (rest seq-tree))
+             state))))
 
 (defn aacc
   "actually a compiler compiler:
@@ -65,12 +62,13 @@
    tree is instaparse-enlive format \n
    state initializes the compiler \n
    if rule-map is not provided state 
-   must contain :rule-map.
+   should contain :rule-map, or no behavior
+   will result.
    
    returns state."
-  ([tree state]
-   (aacc-looper tree (e-tree-seq tree) state))
-  ([tree state rule-map]
-   (aacc-looper tree (e-tree-seq tree) (assoc state :rule-map rule-map))))
+  ([state tree]
+   (aacc-looper (assoc state :root-tree tree) (e-tree-seq tree) ))
+  ([state tree rule-map]
+   (aacc-looper (assoc state :rule-map rule-map :root-tree tree) (e-tree-seq tree))))
                      
         
