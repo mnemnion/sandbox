@@ -19,7 +19,9 @@
        (println "Root! " (str (:tag root)))
        (println "Contents! " (apply str (:content (first seq-tree))))                              
        (println "Seq Tree! " (apply str seq-tree))
-                          (assoc state :count (inc (:count state)))))  
+       (if (= rule-key :tree)
+           (assoc state :count 1)
+           (assoc state :count (inc (:count state))))))  
         
 (def ^:private test-rule-map
      {:tree test-rule
