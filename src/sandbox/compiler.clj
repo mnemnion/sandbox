@@ -1,11 +1,6 @@
 (ns sandbox.compiler
     (:require [sandbox.core :as s]))
 
-; so that we can repeatedly call a handler that uses the keyword to pull a-func
-; (which would actually be gensymmed/anonymous) and call it, set! state to the return
-; value, and call first on the cdr to get the next keyword.
-;
-; when the handler runs out of cdr, it returns the state. 
 
 (defmacro def-rule-fn [& body]  
         `(fn [~'rule-key ~'state ~'root ~'seq-tree]
@@ -25,26 +20,36 @@
        (println "Root! " (str (:tag root)))
        (println "Contents! " (apply str (:content (first seq-tree))))                              
        (println "Seq Tree! " (apply str seq-tree))
-                          (inc state)))
+                          (assoc state :count (inc (:count state)))))
                        
 (def literal-token-rule
      (def-rule-fn
        (println "Executing Literal Token Rule ")
        (println "Literal Token Contains " (apply str (first seq-tree)))
-                                                            (inc state)))
-                             
+                                                            (assoc state :count (inc (:count state))) ))
+ (def default-rule
+      (def-rule-fn
+        state))                                                                
+        
 (def test-rule-map
      {:tree test-rule
       :node test-rule
       :leaf test-rule})
+      
+(defn- retrieve-rule
+  [seq-tree rule-map]
+  (let [rule-fn ((:tag (first seq-tree)) rule-map)] 
+       (if (fn? rule-fn)
+           rule-fn
+           default-rule)))
                              
 (defn aacc-looper
-   [tree seq-tree rule-map state] ;ignore my nil side-effect from println etc
+   [tree seq-tree state] 
    (if (coll? (:content (first seq-tree)))
-       (recur tree (rest seq-tree) rule-map (((:tag (first seq-tree)) rule-map) (:tag (first seq-tree)) state tree seq-tree))
+       (recur tree (rest seq-tree) ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state tree seq-tree))
        (if (seq seq-tree)
-           (recur tree (rest seq-tree) rule-map (literal-token-rule :aaac-key-for-string state tree seq-tree))
-           (println "state is now: " (str state) " exiting..."))))
+           (recur tree (rest seq-tree) (literal-token-rule :aaac-key-for-string state tree seq-tree))
+             state)))
 
 (defn aacc
   "actually a compiler compiler:
@@ -53,7 +58,7 @@
    def-rule-fn vals.
    
    returns state, which is created by the compiler."
-  [tree rule-map state]
-  (aacc-looper tree (e-tree-seq tree) rule-map state))
+  [tree state]
+  (aacc-looper tree (e-tree-seq tree) state))
                      
         
