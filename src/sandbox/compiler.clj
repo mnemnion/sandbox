@@ -16,9 +16,12 @@
      (def-rule-fn
        (println "Keyword! " (str rule-key))
        (println "State! " (str (:count state)))
-       (println "Root! " (str (:tag root)))
-       (println "Contents! " (apply str (:content (first seq-tree))))                              
+       #_(println "Root! " (str (:tag root)))
+       #_(println "Contents! " (apply str (:content (first seq-tree))))
+       #_(println "First of Seq-Tree!" (apply str (first seq-tree)))
        (println "Seq Tree! " (apply str seq-tree))
+       (when (string? (first (rest seq-tree)))
+             (println "we got a token coming up"))
        (if (= rule-key :tree)
            (assoc state :count 1)
            (assoc state :count (inc (:count state))))))  
@@ -32,12 +35,16 @@
       (def-rule-fn
         state))
 
-(def literal-token-rule default-rule
-     #_(def-rule-fn
+(def lit-tok-rule #_default-rule
+     (def-rule-fn
        (println "Executing Literal Token Rule ")
        (println "Literal Token Contains \"" (apply str (first seq-tree)) "\"")
                                                             (assoc state :count (inc (:count state))) ))
-                                                                                             
+
+(def literal-token-rule
+     (def-rule-fn
+      state))
+
 ; to replace default-rule, 
 ; or literal-token-rule, 
 ; (alter-var-root #'instaparse.aacc/default-rule (constantly new-rule))
@@ -52,11 +59,13 @@
 (defn aacc-looper
    [state seq-tree] 
    (let [tree (:root-tree state)]
-   (if (coll? (:content (first seq-tree)))
-       (recur ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state tree seq-tree) (rest seq-tree)) 
-       (if (seq seq-tree)
-           (recur (literal-token-rule :aaac-key-for-string state tree seq-tree) (rest seq-tree))
-             state))))
+   (if (not (:stop state))
+       (if (coll? (:content (first seq-tree)))
+         (recur ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state tree seq-tree) (rest seq-tree)) 
+         (if (seq seq-tree)
+           (recur (lit-tok-rule :aaac-key-for-string state tree seq-tree) (rest seq-tree))
+           state))
+        state)))
 
 (defn aacc
   "actually a compiler compiler:

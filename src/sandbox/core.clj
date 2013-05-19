@@ -40,13 +40,13 @@
 (def make-tree-enlive
      "simple tree parser"
      (parser "tree: node* 
-              node: leaf | <'('> node (<'('> node <')'>)* node* <')'> 
+              node: leaf | '(' node (<'('> node <')'>)* node* ')' 
               leaf: #'a+'
               " :output-format :enlive))
               
               
-(def a-tree (make-tree "a(a)a" ))
-(def e-tree (make-tree-enlive "a(a)a" ))
+(def a-tree (make-tree "a(aaa)a" ))
+(def e-tree (make-tree-enlive "a(aaa)a" ))
                               
 (def a-longer-e-tree (make-tree-enlive "aaaaa(aaaa(aaa(aaa)aa)aa)aaaa"))
               
