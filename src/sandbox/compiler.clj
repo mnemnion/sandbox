@@ -4,7 +4,7 @@
 
 (defmacro def-rule-fn [& body]  
         `(fn [~'rule-key ~'state ~'root ~'seq-tree]
-           (println "Calling ..." (str ~'rule-key))    
+           #_(println "Calling ..." (str ~'rule-key))    
            ~@body))
            
 (defn- e-tree-seq 
@@ -13,29 +13,37 @@
   (tree-seq (comp seq :content) :content e-tree))
   
                  
-(def test-rule
+(def ^:private test-rule
      (def-rule-fn
        (println "Keyword! " (str rule-key))
-       (println "State! " (str state))
+       (println "State! " (str (:count state)))
        (println "Root! " (str (:tag root)))
        (println "Contents! " (apply str (:content (first seq-tree))))                              
        (println "Seq Tree! " (apply str seq-tree))
                           (assoc state :count (inc (:count state)))))
                        
-(def literal-token-rule
-     (def-rule-fn
-       (println "Executing Literal Token Rule ")
-       (println "Literal Token Contains " (apply str (first seq-tree)))
-                                                            (assoc state :count (inc (:count state))) ))
- (def default-rule
-      (def-rule-fn
-        state))                                                                
+
+                                                                
         
-(def test-rule-map
+(def ^:private test-rule-map
      {:tree test-rule
       :node test-rule
       :leaf test-rule})
-      
+
+(def default-rule
+      (def-rule-fn
+        state))
+
+(def literal-token-rule default-rule
+     #_(def-rule-fn
+       (println "Executing Literal Token Rule ")
+       (println "Literal Token Contains \"" (apply str (first seq-tree)) "\"")
+                                                            (assoc state :count (inc (:count state))) ))
+                                                                                             
+; to replace default-rule, 
+; or literal-token-rule, 
+; (alter-var-root #'instaparse.aacc/default-rule (constantly new-rule))
+ 
 (defn- retrieve-rule
   [seq-tree rule-map]
   (let [rule-fn ((:tag (first seq-tree)) rule-map)] 
@@ -53,12 +61,16 @@
 
 (defn aacc
   "actually a compiler compiler:
-   takes an instaparse enlive tree
-   and a rule-map with :rule keys and
-   def-rule-fn vals.
    
-   returns state, which is created by the compiler."
-  [tree state]
-  (aacc-looper tree (e-tree-seq tree) state))
+   tree is instaparse-enlive format \n
+   state initializes the compiler \n
+   if rule-map is not provided state 
+   must contain :rule-map.
+   
+   returns state."
+  ([tree state]
+   (aacc-looper tree (e-tree-seq tree) state))
+  ([tree state rule-map]
+   (aacc-looper tree (e-tree-seq tree) (assoc state :rule-map rule-map))))
                      
         
