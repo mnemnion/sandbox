@@ -25,25 +25,35 @@
        (if (= rule-key :tree)
            (assoc state :count 1)
            (assoc state :count (inc (:count state))))))  
-        
-(def ^:private test-rule-map
-     {:tree test-rule
-      :node test-rule
-      :leaf test-rule})
 
-(def default-rule
-      (def-rule-fn
-        state))
 
-(def lit-tok-rule #_default-rule
+(def ^:private test-token-rule 
      (def-rule-fn
        (println "Executing Literal Token Rule ")
        (println "Literal Token Contains \"" (apply str (first seq-tree)) "\"")
                                                             (assoc state :count (inc (:count state))) ))
 
-(def literal-token-rule
-     (def-rule-fn
-      state))
+(def ^:private test-rule-map
+     {:tree test-rule
+      :node test-rule
+      :leaf test-rule})
+      
+(def ^:private test-token-map
+      {"(" test-token-rule
+       ")" test-token-rule })
+       
+
+
+
+(def default-rule
+      (def-rule-fn
+        state))
+
+(def default-token-rule
+      (def-rule-fn
+        state))
+
+
 
 ; to replace default-rule, 
 ; or literal-token-rule, 
@@ -55,6 +65,13 @@
        (if (fn? rule-fn)
            rule-fn
            default-rule)))
+           
+(defn- retrieve-token-rule
+  [seq-tree rule-map]
+  (let [rule-fn (rule-map (first seq-tree))] 
+       (if (fn? rule-fn)
+           rule-fn
+           default-token-rule)))
                              
 (defn aacc-looper
    [state seq-tree] 
@@ -63,7 +80,7 @@
        (if (coll? (:content (first seq-tree)))
          (recur ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state tree seq-tree) (rest seq-tree)) 
          (if (seq seq-tree)
-           (recur (lit-tok-rule :aaac-key-for-string state tree seq-tree) (rest seq-tree))
+           (recur ((retrieve-token-rule seq-tree (:token-rule-map state)) (first seq-tree)  state tree seq-tree) (rest seq-tree))
            state))
         state)))
 
