@@ -3,7 +3,7 @@
 
 
 (defmacro def-rule-fn [& body]  
-        `(fn [~'rule-key ~'state ~'root ~'seq-tree]
+        `(fn [~'rule-key ~'state  ~'seq-tree]
            #_(println "Calling ..." (str ~'rule-key))    
            ~@body))
            
@@ -20,7 +20,6 @@
      (def-rule-fn
        (println "Keyword! " (str rule-key))
        (println "State! " (str (:count state)))
-       #_(println "Root! " (str (:tag root)))
        #_(println "Contents! " (apply str (:content (first seq-tree))))
        #_(println "First of Seq-Tree!" (apply str (first seq-tree)))
        (println "Seq Tree! " (apply str seq-tree))
@@ -97,26 +96,26 @@
 (defn aacc-looper
    "main aacc loop. Provides :stop functionality and a separate token rule map"
    [state seq-tree] 
-   (let [tree (:root-tree state)]
+
    (if (not (:stop state))
        (if (coll? (:content (first seq-tree)))
-         (recur ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state tree seq-tree) (rest seq-tree)) 
+         (recur ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state seq-tree) (rest seq-tree)) 
          (if (seq seq-tree)
-           (recur ((retrieve-token-rule (str (first seq-tree)) (:token-rule-map state)) (first seq-tree) state tree seq-tree) #_state (rest seq-tree))
+           (recur ((retrieve-token-rule (str (first seq-tree)) (:token-rule-map state)) (first seq-tree) state seq-tree) #_state (rest seq-tree))
            state))
-        state)))
+        state))
 
 (defn aacc-looper-no-tok
   [state seq-tree]
   "main aacc loop, for programs with no literal token rules"
-   (let [tree (:root-tree state)]
+
    (if (not (:stop state))
        (if (coll? (:content (first seq-tree)))
-         (recur ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state tree seq-tree) (rest seq-tree)) 
+         (recur ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state seq-tree) (rest seq-tree)) 
          (if (seq seq-tree)
            (recur state (rest seq-tree))
            state))
-        state)))
+        state))
 
 (defn aacc
   "actually a compiler compiler:
@@ -135,6 +134,8 @@
   ([state tree rule-map]
    (if (not (nil? (:token-rule-map state)))
        (aacc-looper (assoc state :rule-map rule-map :root-tree tree) (e-tree-seq tree))
-       (aacc-looper-no-tok (assoc state :rule-map rule-map :root-tree tree) (e-tree-seq tree)))))
+       (aacc-looper-no-tok (assoc state :rule-map rule-map :root-tree tree) (e-tree-seq tree))))
+  ([state tree rule-map token-map]
+   (aacc-looper (assoc state :rule-map rule-map :root-tree tree :token-rule-map token-map) (e-tree-seq tree))))
                      
         
