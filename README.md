@@ -6,6 +6,12 @@ yacc, and instaparse, are not compiler compilers. yacc is a parser compiler, and
 
 aacc extends that flexibility, allowing a single-pass, rule-driven walk through a parse tree.
 
+aacc is also a bit of a pun:
+
+```clojure
+{:a a :c c}
+```
+
 ##Usage
 
 aacc takes a map of keywords to functions defined using the def-rule-fn macro. The keywords correspond to instaparse rule names; __add__ optionally, a map of literal tokens to rules may also be provided. __add__
