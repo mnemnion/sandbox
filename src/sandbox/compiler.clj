@@ -10,7 +10,11 @@
 (defn- e-tree-seq 
   "tree-seqs enlive trees, at least instaparse ones"
   [e-tree]
-  (tree-seq (comp seq :content) :content e-tree))  
+  (tree-seq (comp seq :content) :content e-tree)) 
+            
+(defn- inc-state
+  [state]
+  (assoc state :count (inc (:count state))))
                  
 (def ^:private test-rule
      (def-rule-fn
@@ -24,20 +28,21 @@
              (println "we got a token coming up"))
        (if (= rule-key :tree)
            (assoc state :count 1)
-           (assoc state :count (inc (:count state))))))  
+           (inc-state state))))  
 
 
 (def ^:private test-token-rule 
      (def-rule-fn
        (println "Executing Literal Token Rule ")
        (println "Literal Token Contains \"" (str (first seq-tree)) "\"")
-(assoc state :count (inc (:count state))) ))
+                                                 (inc-state state)))
 
 (def ^:private l-paren-rule
       (def-rule-fn
        (println "Executing L Paren Rule ")
        (println "Token Contains: " (str (first seq-tree)))
-            (assoc state :count (inc (:count state)))))                                   
+            (inc-state state)))     
+                       
 (def ^:private single-a-rule test-token-rule)
 
 (def ^:private test-rule-map
