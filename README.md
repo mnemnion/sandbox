@@ -14,7 +14,7 @@ aacc is also a bit of a pun:
 
 ##Usage
 
-aacc takes a map of keywords to functions defined using the def-rule-fn macro. The keywords correspond to instaparse rule names;  optionally, a map of literal tokens to rules may also be provided.
+aacc takes a map of keywords to functions defined using the **def-rule-fn** macro. The keywords correspond to instaparse rule names;  optionally, a map of literal tokens to rules may also be provided. 
 
 aac is called like this:
 
@@ -26,7 +26,9 @@ aac is called like this:
 (aacc state tree rule-map token-map)
 ```
 
-'state' is a map, which is initialized with the rule map as the value of a **:rule-map** key. **:token-map** may be added to state as well; the 3 and 4 argument forms push the maps into state before beginning the seq.
+**state** is a map, which is initialized with the rule map as the value of a **:rule-map** key. **:token-map** may be added to **state** as well; the 3 and 4 argument forms push the maps into state before beginning the seq. Failure to provide a rule-map results in a null pointer exception; it's that or heat up your computer. 
+
+**state** is returned by aacc at the end of the walk. 
 
 The variable order allows a convenient definition for a compiler function:
 
@@ -39,7 +41,7 @@ Which, when called on a tree, compiles it. Whether this is true compilation or i
 
 ##Behavior
 
-aacc **recur**sively walks the parse tree, repeatedly calling the rule functions. Rule functions have convenient access to four magic variables: **state**, **rule-key**, **root**, and **seq-tree**. the **rule-key** is the keyword which called the rule, **root** is the entire tree, and **seq-tree** is a sequence of the remaining tree to be walked. 
+aacc **recur**sively walks the parse tree, repeatedly calling the rule functions. Rule functions defined with **def-rule-fn** have convenient access to four magic variables: **state**, **rule-key**, **root**, and **seq-tree**. the **rule-key** is the keyword which called the rule, **root** is the entire tree, and **seq-tree** is a sequence of the remaining tree to be walked. 
 
 ```clojure
 (first (rest seq-tree) 
@@ -48,20 +50,20 @@ will give you the next node on the tree, as expected.
 
 All rule functions are expected to return state, in a useful fashion.
 
-state contains everything but the seq-tree, which ensures that aacc will exit unless a subrule contains an infinite loop. this means the value of **root**, **rule-map** and **token-map** may be dynamically changed by modifying the bindings of **:root-tree**, **:rule-map** or **:token-map** within the state map. 
+state contains everything but the seq-tree, which ensures that aacc will exit unless a subrule contains an infinite loop. this means the value of **root**, **rule-map** and **token-map** may be dynamically changed by modifying the bindings of **:root-tree**, **:rule-map** or **:token-map** within the state map, with the changes reflected in the next iteration. 
 
 aacc will exit immediately if the returned state map contains a value for the keyword **:stop**. **:error** is probably a good place to put things that go wrong, and **:warning** might be a nice location for warnings. 
 
-**:stop**, **:root-tree**, **:rule-map**, **:token-map**, and **:error** are the only magic values in state. Modifying the value of **:root-tree** will not change the underlying tree-seq, which is baked at compile time and will walk the entire tree exactly once. Changing the mapping of **:root-tree** modifies any rule-based use of **root** subsequent to the change, but will not affect aacc's function directly. 
+**:stop**, **:root-tree**, **:rule-map**, and **:token-map** are the only magic values in state. Modifying the value of **:root-tree** will not change the underlying tree-seq, which is baked in at run time and will walk the entire tree exactly once. Changing the mapping of **:root-tree** modifies any rule-based use of **root** subsequent to the change, but will not affect aacc's function directly. 
 
-There are no magic keywords in the **rule-map** or **token-map**. These are the namespae of the language you're parsing, and it is hygenic: anything instaparse will accept as a rule name or literal token may be specified. 
+There are no magic keywords in the **rule-map** or **token-map**. These are the namespace of the language you're parsing, and it is hygenic: anything instaparse will accept as a rule name or literal token may be specified. 
 
 If the rule map does not contain a particular keyword, the default rule, **instaparse.aacc/default-rule**, is used. It returns state, doing nothing further. Literal tokens that are not matched by the token map call **instaparse.aacc/default-token-rule**. Both of these may be over-ridden if necessary, in the following fashion:
 
 ```clojure
 (alter-var-root #'instaparse.aacc/default-rule (constantly new-rule))
 ```
-Where new-rule should be created with the def-rule-fn macro or provide the same magic variables. When **default-rule** is called, it is passed **:aacc-default-rule** as the value of **rule-key**. **default-token-rule**, similarly, provideds **:aacc-default-token-rule**. If you have a rule 'aacc-default-rule' in your grammar, for whatever reason, it will *not* override **default-rule**, instead calling the provided rule-fn.
+Where new-rule should be created with the def-rule-fn macro or provide the same magic variables. When **default-rule** or **default-token-rule** is called, it is passed the **:rule** keyword or literal string that calls it, just like a specified rule. 
 
 Note that aacc either recurs from tail position or returns state, and doesn't care what the rule expressed at the root node is. That means it may be called, recursively, on any node encountered during the walk, or on any tree generated by aacc rules, or passed into state. This will *not* consume the original tree-seq or modify it in any fashion: the original tree provided to any call of aacc is frozen and will be depth-first walked exactly once before returning state. 
 
@@ -70,16 +72,16 @@ This allows you to do interesting things like embed a tree and rule-map from ano
 A useful way to do this is to define a compiler as above, and add it to state. This closes over the rule-map, making it unavailable for accidental modification until you enter the new compiler. Like so:
 
 ```clojure
+(def rule-map {:json json-rules})
 (def json-compiler (partial aacc {:rule-key json-rules}))
 (def meta-compiler (partial aacc {:rule-key rule-map :json-compiler json-compiler)
-(def rule-map {:json json-rule})
 ```
 
 Then, when you hit a **:json** tag, the **json-rule** can call **json-compiler** on the child node, which presumably contains JSON. Note that this *does* *not* consume the child node in the **meta-compiler**, which must be handled separately after **json-compiler** returns state. 
 
 You can also pack state with a json tree and call **json-compiler** on that tree at any point. The rule is that tree-seq is immutable, you will visit every rule and token exactly once and the only way out is to add **:stop** to the state. 
 
-This also means you can trivially send aacc into recursive descent hell by calling (aacc state :root-tree) from within a rule. Please don't do that. aacc, left to its own devices, will exit, given a string of finite length, which is currently the only input option. 
+This also means you can trivially send aacc into recursive descent hell by calling **(aacc state :root-tree)** from within a rule. Please don't do that. aacc, left to its own devices, will exit, given a string of finite length, which is currently the only input option. 
 
 ##Future
 
