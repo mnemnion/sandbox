@@ -30,9 +30,15 @@
 (def ^:private test-token-rule 
      (def-rule-fn
        (println "Executing Literal Token Rule ")
-       (println "Literal Token Contains \"" (apply str (first seq-tree)) "\"")
-                                              
-                                                            (assoc state :count (inc (:count state))) ))
+       (println "Literal Token Contains \"" (str (first seq-tree)) "\"")
+(assoc state :count (inc (:count state))) ))
+
+(def ^:private l-paren-rule
+      (def-rule-fn
+       (println "Executing L Paren Rule ")
+       (println "Token Contains: " (str (first seq-tree)))
+            (assoc state :count (inc (:count state)))))                                   
+(def ^:private single-a-rule test-token-rule)
 
 (def ^:private test-rule-map
      {:tree test-rule
@@ -40,8 +46,10 @@
       :leaf test-rule})
       
 (def ^:private test-token-map
-      {"(" test-token-rule
-       ")" test-token-rule })
+      {"(" l-paren-rule
+       ")" test-token-rule
+       "a" single-a-rule
+       })
        
 
 
@@ -74,11 +82,12 @@
            default-rule)))
            
 (defn- retrieve-token-rule
-  [seq-tree rule-map]
-  #_(let [rule-fn (rule-map (first seq-tree))] 
-       (if (not (false? rule-fn))
+  [rule-string rule-map]
+  (let [rule-fn (rule-map rule-string)] 
+       (if (fn? rule-fn)
            rule-fn
-           default-token-rule)) default-token-rule)
+           default-token-rule)))
+           
                              
 (defn aacc-looper
    [state seq-tree] 
@@ -87,7 +96,7 @@
        (if (coll? (:content (first seq-tree)))
          (recur ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state tree seq-tree) (rest seq-tree)) 
          (if (seq seq-tree)
-           (recur ((retrieve-token-rule seq-tree (:token-rule-map state)) (first seq-tree)  state tree seq-tree) (rest seq-tree))
+           (recur ((retrieve-token-rule (str (first seq-tree)) (:token-rule-map state)) (first seq-tree) state tree seq-tree) #_state (rest seq-tree))
            state))
         state)))
 
