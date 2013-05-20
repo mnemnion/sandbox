@@ -14,7 +14,7 @@ aacc is also a bit of a pun:
 
 ##Usage
 
-aacc takes a map of keywords to functions defined using the def-rule-fn macro. The keywords correspond to instaparse rule names; __add__ optionally, a map of literal tokens to rules may also be provided. __add__
+aacc takes a map of keywords to functions defined using the def-rule-fn macro. The keywords correspond to instaparse rule names;  optionally, a map of literal tokens to rules may also be provided.
 
 aac is called like this:
 
@@ -22,7 +22,7 @@ aac is called like this:
 (aacc state tree)
 ;or
 (aacc state tree rule-map)
-;or ---tba---
+;or
 (aacc state tree rule-map token-map)
 ```
 
