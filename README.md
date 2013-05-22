@@ -14,7 +14,7 @@ aacc is also a bit of a pun:
 
 ##Usage
 
-aacc takes a parse tree from instaparse, in enlive format only (at present), and a map of keywords to functions defined using the **def-rule-fn** macro. The keywords correspond to instaparse rule names.  Optionally, a map of literal tokens to rules may also be provided. 
+aacc takes a map of keywords to functions defined using the **def-rule-fn** macro. The keywords correspond to instaparse rule names.  Optionally, a map of literal tokens to rules may also be provided. 
 
 aacc is called like this:
 
@@ -26,7 +26,7 @@ aacc is called like this:
 (aacc state tree rule-map token-map)
 ```
 
-**state** is a map, which is initialized with the rule map as the value of a **:rule-map** key. **:token-map** may be added to **state** as well; the 3 and 4 argument forms push the maps into **state** before beginning the seq. Failure to provide a rule-map results in a null pointer exception; it's that or heat up your computer. 
+**state** is a map, which is initialized with the rule map as the value of a **:rule-map** key. **:token-map** may be added to **state** as well; the 3 and 4 argument forms push the maps into state before beginning the seq. Failure to provide a rule-map results in a null pointer exception; it's that or heat up your computer. 
 
 **state** is returned by aacc at the end of the walk. 
 
@@ -42,10 +42,10 @@ Which, when called on a tree, compiles it. Whether this is true compilation or i
 The variable order also means that, to start aacc with a clean slate, you must provide an empty **state** explicitly:
 
 ```clojure
-(aacc {} tree rule-map token-map)
+(aacc {} rule-map token-map)
 ```
 
-As all four parameters are hash maps, assuming enlive format, aacc will respond to forgetting the **state** by silently returning the **tree** as **state**. 
+As all four parameters are hash maps, aacc will respond to forgetting the state by silently returning the rule-map as state. 
 
 Rules are defined like so:
 
