@@ -69,20 +69,20 @@ Rules are defined like so:
 
 ##Behavior
 
-aacc **recur**sively walks the parse tree, repeatedly calling the rule functions. Rule functions defined with **def-rule-fn** have convenient access to four magic variables: **state**, **rule-key**, **root**, and **seq-tree**. the **rule-key** is the keyword which called the rule, **root** is the entire tree, and **seq-tree** is a sequence of the remaining tree to be walked. 
+aacc **recur**sively walks the parse tree, repeatedly calling the rule functions. Rule functions defined with **def-rule-fn** have convenient access to three magic variables: **state**, **rule-key**, and **seq-tree**. The **rule-key** is the keyword or token which called the rule, **seq-tree** is a sequence of the remaining tree to be walked, and **state** is returned by every rule.
 
 ```clojure
 (first (rest seq-tree) 
 ```
 will give you the next node on the tree, as expected. 
 
-All rule functions are expected to return state, in a useful fashion.
+All rule functions are expected to return **state**, in a useful fashion.
 
-**state** contains everything but the **seq-tree**, which ensures that aacc will exit unless a subrule contains an infinite loop. This means the value of **root**, **rule-map** and **token-map** may be dynamically changed by modifying the bindings of **:root-tree**, **:rule-map** or **:token-map** within the state map, with the changes reflected in the next iteration. 
+**state** contains everything but the **seq-tree**, which ensures that aacc will exit unless a subrule contains an infinite loop. This means the value of **rule-map** and **token-map** may be dynamically changed by modifying the bindings of **:rule-map** or **:token-map** within the state map, with the changes reflected in the next iteration. 
 
 aacc will exit immediately if the returned state map contains a value for the keyword **:stop**. **:error** is probably a good place to put things that go wrong, and **:warning** might be a nice location for warnings. 
 
-**:stop**, **:root-tree**, **:rule-map**, and **:token-map** are the only magic values in **state**. **:pause** and **:aacc-error** are reserved, but not used.  Modifying the value of **:root-tree** will not change the underlying tree-seq, which is baked in at run time and will walk the entire tree exactly once. Changing the mapping of **:root-tree** modifies any rule-based use of **root** subsequent to the change, but will not affect aacc's function directly. 
+**:stop**, **:root-tree**, **:rule-map**, and **:token-map** are the only magic values in **state**. **:pause** and **:aacc-error** are reserved, but not used. **:root-tree** contains the **tree** argument from the aacc call, not the seq, the original tree. Modifying the value of **:root-tree** will not change the underlying tree-seq, which is baked in at run time and will walk the entire tree exactly once.
 
 There are no magic keywords in the **rule-map** or **token-map**. These are the namespace of the language you're parsing, and it is hygenic: anything instaparse will accept as a rule name or literal token may be specified. 
 
@@ -135,7 +135,6 @@ It would be quite nice to add a magic word **:pause** to the state machine, that
 
 ## TO DO
 
-update documentation to reflect the removal of the **root** magic variable. It's now in **state** where it belongs. 
 
 add error correction that causes the lack of a rule-map to cause aacc to push **:aacc-error true** into **state** and exit. Update documentation accordingly.
 
