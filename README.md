@@ -82,7 +82,7 @@ All rule functions are expected to return **state**, in a useful fashion.
 
 aacc will exit immediately if the returned state map contains a value for the keyword **:stop**. **:error** is probably a good place to put things that go wrong, and **:warning** might be a nice location for warnings. 
 
-**:stop**, **:root-tree**, **:rule-map**, and **:token-map** are the only magic values in **state**. **:pause** and **:aacc-error** are reserved, but not used. **:root-tree** contains the **tree** argument from the aacc call, not the seq, the original tree. Modifying the value of **:root-tree** will not change the underlying tree-seq, which is baked in at run time and will walk the entire tree exactly once.
+**:stop**, **:root-tree**, **:rule-map**, and **:token-map** are the only magic values in **state**. **:pause**, **:aacc-error** and **:crash-only** are reserved, but not used. **:root-tree** contains the **tree** argument from the aacc call, not the seq, the original tree. Modifying the value of **:root-tree** will not change the underlying tree-seq, which is baked in at run time and will walk the entire tree exactly once.
 
 There are no magic keywords in the **rule-map** or **token-map**. These are the namespace of the language you're parsing, and it is hygenic: anything instaparse will accept as a rule name or literal token may be specified. 
 
@@ -127,7 +127,7 @@ aacc is meant to be performant, suitable for processing, for example, hundreds o
 
 aacc will already run faster if you don't provide a literal token map, which is unnecessary for many purposes as all literal tokens are available in the seq and can be utilized from the grammar rules. 
 
-Similarly, **:stop** may not be necessary if you want a crash-only compiler, and it would be nice to expose a faster, unsafe aacc that doesn't stop and check for **:stop**. I haven't done this, but if I do, you will be able to pass **{:crash-only true}** to the initial aacc state and aacc will remove it from **state** before running the unsafe version of the looper.  
+Similarly, **:stop** may not be necessary if you want a crash-only compiler, and it would be nice to expose a faster, unsafe aacc that doesn't stop and check for **:stop**. I haven't done this, but if I do, you will be able to pass **{:crash-only true}** to the initial aacc state and aacc will leave it in there so your rules can check which environment they're running in. 
 
 At the moment, aacc only supports the enlive output format. This is because it's easy to work with and conceivably other key-value pairs could be profitably added to the tree before aacc does its thing. aacc only uses the **:tag** and **:content** keys, because that's all instaparse outputs, but additional key-value pairs in the enlive graph should not cause problems (this is worth verifying).
 
