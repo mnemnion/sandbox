@@ -42,10 +42,10 @@ Which, when called on a tree, compiles it. Whether this is true compilation or i
 The variable order also means that, to start aacc with a clean slate, you must provide an empty **state** explicitly:
 
 ```clojure
-(aacc {} rule-map token-map)
+(aacc {} tree rule-map token-map)
 ```
 
-As all four parameters are hash maps, aacc will respond to forgetting the state by silently returning the rule-map as state. 
+As all four parameters are hash maps, aacc will respond to forgetting the state by silently returning the **tree** as **state**. 
 
 Rules are defined like so:
 
