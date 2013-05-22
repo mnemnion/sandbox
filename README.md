@@ -58,7 +58,7 @@ Rules are defined like so:
 ; macroexpand-1 to:
 
 (fn 
- [rule-key state root seq-tree] 
+ [rule-key state seq-tree] 
  (println "I'm in the foo rule. I can access " (str rule-key) " among other things.") 
                                                                                state)
 ; then put it in a map:
@@ -86,7 +86,7 @@ aacc will exit immediately if the returned state map contains a value for the ke
 
 There are no magic keywords in the **rule-map** or **token-map**. These are the namespace of the language you're parsing, and it is hygenic: anything instaparse will accept as a rule name or literal token may be specified. 
 
-In many cases, a **token-map** is not necessary. If a grammar is designed so that all literal tokens are contained by a single rule, then (first (rest seq-tree)) will always deliver that token from that node. This is good practice in many cases, and the instaparse documentation provides a formula for compacting your trees in this fashion. aacc will run faster if you do not provide a **token-map**, because it will not look for a rule or execute **default-token-rule**. This also means that if an initial **token-map** is not provided, adding **:token-map** to **state** will not cause the resulting rules to be executed. If you want to dynamically load token rules as you find them, starting from nothing, provide an empty **token-map** when calling aacc.
+In many cases, a **token-map** is not necessary. If a grammar is designed so that all literal tokens are contained by a single rule, then **(frest seq-tree)** will always deliver that token from that node. This is good practice in many cases, and the instaparse documentation provides a formula for compacting your trees in this fashion. aacc will run faster if you do not provide a **token-map**, because it will not look for a rule or execute **default-token-rule**. This also means that if an initial **token-map** is not provided, adding **:token-map** to **state** will not cause the resulting rules to be executed. If you want to dynamically load token rules as you find them, starting from nothing, provide an empty **token-map** when calling aacc.
 
 If the rule map does not contain a particular keyword, the default rule, **aacc/default-rule**, is used. It returns state, doing nothing further. Literal tokens that are not matched by the token map call **aacc/default-token-rule**. Both of these may be overridden if necessary, in the following fashion:
 
