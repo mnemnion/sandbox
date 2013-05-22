@@ -7,6 +7,9 @@
            #_(println "Calling ..." (str ~'rule-key))    
            ~@body))
            
+(defmacro call-rule [rule-to-call]
+          `(~rule-to-call ~'rule-key ~'state ~'seq-tree))
+           
 (defn- e-tree-seq 
   "tree-seqs enlive trees, at least instaparse ones"
   [e-tree]
