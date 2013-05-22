@@ -1,4 +1,4 @@
-# instaparse.aacc
+# aacc
 
 Actually A Compiler Compiler. A backend to Instaparse that lets you do arbitrary things with a parse tree. 
 
