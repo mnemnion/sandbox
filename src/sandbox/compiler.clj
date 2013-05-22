@@ -2,12 +2,19 @@
     (:require [sandbox.core :as s]))
 
 
-(defmacro def-rule-fn [& body]  
+(defmacro def-rule-fn 
+      "given the body of a function, defines the
+      function as taking the args [rule-key state seq-tree]"    
+          [& body]  
         `(fn [~'rule-key ~'state  ~'seq-tree]
            #_(println "Calling ..." (str ~'rule-key))    
            ~@body))
            
-(defmacro call-rule [rule-to-call]
+(defmacro call-rule 
+        "calls a rule with the arguments [rule-key state seq-tree],
+         which must be bound before the call. Intended to be called
+         within the environment of a rule."  
+          [rule-to-call]
           `(~rule-to-call ~'rule-key ~'state ~'seq-tree))
            
 (defn- e-tree-seq 
