@@ -69,7 +69,7 @@ All the action in Nock happens on cells, which are reduced through automatic rul
 
 `.*([42 42] [5 [0 3] [0 2]])`
 
-`.*(42 [5 [1 3] [1 2]]`
+`.*(42 [5 [1 3] [1 2]])`
 
 
 
