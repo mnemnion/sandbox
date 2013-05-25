@@ -59,7 +59,15 @@ and
 
 Meaning that brackets associate to the right so `[a b c d]` becomes `[a [b [c d]]]`.
 
-As an implementation detail, note that this means that, in order to have common structures such as `[[a b]] [c d]]`, one must either have a separator character or a bit in the binary representation the shows whether an atom is part of a pair or not. The latter is clearly prefereble. We may say that an atom that is not a part of a cell is a noble atom, clearly. The first member of a cell is the carion, and the second member, just as clearly, the cdrion. I will brook no argument in these assessments. Noble atoms may not be ionic, and all is right in God's Kingdom.  
+As an implementation detail, note that this means that, in order to have common structures such as `[[a b]] [c d]]`, one must either have a separator character or a bit in the binary representation the shows whether an atom is part of a pair or not. The latter is clearly prefereble. We may say that an atom that is not a part of a cell is a noble atom. The first member of a cell is the carion, and the second member, just as clearly, the cdrion. I will brook no argument in these assessments. Noble atoms may not be ionic, and all is right in God's Kingdom.
+
+I will not burden you with these terms, however: Nock convention is to call the head of a cell the subject, the tail the formula, and the result of Nocking the cell is the product. 
+
+A noble atom is easy to interpret in Nock: it is unstructured data, such as one might send if two parties understand the format of the payload. Nock, helpfully, goes into an infinite loop if called on a noble atom. This is a formality which needn't be acted out in practice. 
+
+All the action in Nock happens on cells, which are reduced through automatic rules, that together make up the Nock spec. 
+
+`.*([42 42] [5 [0 3] [0 2]])`
 
 
 
