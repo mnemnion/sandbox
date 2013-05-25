@@ -129,7 +129,11 @@ aacc will already run faster if you don't provide a literal token map, which is 
 
 Similarly, **:stop** may not be necessary if you want a crash-only compiler, and it would be nice to expose a faster, unsafe aacc that doesn't stop and check for **:stop**. I haven't done this, but if I do, you will be able to pass **{:crash-only true}** to the initial aacc state and aacc will leave it in there so your rules can check which environment they're running in. 
 
+There is one command that is common and should be supported out of the loop. `{:drop n}`, added to `state`, would cause aacc to drop n tokens without calling any rules on them. If I add this, you'll have to activate it with a `{:drop true}` in `state`.
+
 At the moment, aacc only supports the enlive output format. This is because it's easy to work with and conceivably other key-value pairs could be profitably added to the tree before aacc does its thing. aacc only uses the **:tag** and **:content** keys, because that's all instaparse outputs, but additional key-value pairs in the enlive graph should not cause problems (this is worth verifying).
+
+I may want to add a set of standard utilities; these would be fragments of macro-defined code that assume they're inside an environment where the `->` macro has been called on `state`. That way a simple `aac.util/count` would expqnd into `(assoc ,,, :count (inc (:count state)))` where the commas are the expansion point for the `->` macro. `->` would have to explicitly be called; the expected structure of a rule is possibly a conditional or so, followed by one or more actions on `state`. If it's more than one, thread. 
 
 The hiccup output has the advantage that any vector within it is valid Clojure code. Enlive embeds literals strings in lists, which can be at the first position, causing an error; since hiccup uses vectors, anything can be at the first position. It would be good to support both formats, so that rules can be trivially called on any subsection of a tree, for diagnostic purposes. 
 
