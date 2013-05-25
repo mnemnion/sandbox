@@ -39,6 +39,12 @@
            (assoc state :count 1)
            (call-rule inc-state))))  
 
+(def ^:private threaded-rule
+      (def-rule-fn
+        (-> state 
+            (assoc :count (inc (:count state)))
+            (assoc :foo "bar")
+            (dissoc :bar))))
 
 (def ^:private test-token-rule 
      (def-rule-fn
@@ -56,7 +62,7 @@
 
 (def ^:private test-rule-map
      {:tree test-rule
-      :node test-rule
+      :node threaded-rule
       :leaf test-rule})
       
 (def ^:private test-token-map
