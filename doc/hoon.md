@@ -19,3 +19,9 @@ I accept, from reading the Hoon documentation (which is for Watt, which Hoon was
 The Martian Stack divides tasks differently from Earth technology. Hoon without jets is as useless as any other Nock; Hoon defines the jets needed to make Hoon fast, and those jets comprise the actual virtual machine upon which Hoon code is executed.
 
 The jets are modular and may do whatever they wish as long as they return the same result as the representative Nock would. To run Hoon, you must have Hoon, Nock, and a Nock interpreter that jet-propels the specified Nock output of Hoon. Nock is near frozen and Hoon will get there, eventually, at which point an Encyclopedia will be feasible and we can all get building.
+
+Jets are currently implemented in C, which is fast enough for government work. If the Martian Stack demonstrates its promise, jets will be a property of Nock-optimized silicon. This is a fairly feasible target architecture; the jets, and only the jets, must be ported to microcode. 
+
+The intention is that everything of critical importance is written in Hoon, and hence in Nock. Critical importance means the compiler, execution environment, and network. I'd add the core libraries but Hoon doesn't appear to have libraries in the usual sense, since it doesn't have keywords in the usual sense. A definition is simply available or it isn't. 
+
+Not everyone is going to want to program in Hoon. I might, from time to time, certainly if better alternatives dawdle in emerging. To stay in the Martian Stack, it is not enough to target Nock from another language. One must either target Hoon, which is preferred, or accept the challenge of emitting Hoon-jet compatible Nock in some more direct fashion. 
