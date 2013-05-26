@@ -64,7 +64,7 @@
 
 (def ^:private test-rule-map
      {:tree test-rule
-      :node threaded-rule
+      :node test-rule
       :leaf test-rule})
       
 (def ^:private test-token-map
@@ -110,6 +110,12 @@
            rule-fn
            default-token-rule)))
            
+(defmacro ^:private recur-on-rule []
+           `(recur ((~'retrieve-rule ~'seq-tree (:rule-map ~'state)) 
+                       (:tag (first ~'seq-tree)) 
+                       ~'state 
+                       ~'seq-tree) 
+                   (rest ~'seq-tree)))           
                              
 (defn aacc-looper
    "main aacc loop. Provides :stop functionality and a separate token rule map"
@@ -118,7 +124,7 @@
    (if (:stop state)
        state
        (if (coll? (:content (first seq-tree)))
-         (recur ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state seq-tree) (rest seq-tree)) 
+         (recur-on-rule) 
          (if (seq seq-tree)
            (recur ((retrieve-token-rule (str (first seq-tree)) (:token-rule-map state)) (first seq-tree) state seq-tree) #_state (rest seq-tree))
            state))))
@@ -130,7 +136,7 @@
    (if (:stop state)
        state
        (if (coll? (:content (first seq-tree)))
-         (recur ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state seq-tree) (rest seq-tree)) 
+         (recur-on-rule) 
          (if (seq seq-tree)
            (recur state (rest seq-tree))
            state))))
