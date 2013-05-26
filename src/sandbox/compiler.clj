@@ -1,5 +1,6 @@
 (ns sandbox.compiler
-    (:require [sandbox.core :as s]))
+    (:require [sandbox.core :as s]
+     :require [swiss-arrows.core :refer :all]))
 
 
 (defmacro def-rule-fn 
@@ -7,7 +8,7 @@
       function as taking the args [rule-key state seq-tree]"    
           [& body]  
         `(fn [~'rule-key ~'state  ~'seq-tree]
-           #_(println "Calling ..." (str ~'rule-key))    
+           #_(println "Calling ..." ~'rule-key)    
            ~@body))
            
 (defmacro call-rule 
@@ -41,10 +42,11 @@
 
 (def ^:private threaded-rule
       (def-rule-fn
-        (-> state 
-            (assoc :count (inc (:count state)))
+        (-<> (call-rule test-rule)
+            (assoc :count (inc (:count (call-rule test-rule))))
             (assoc :foo "bar")
-            (dissoc :bar))))
+            (dissoc :bar))
+            ))
 
 (def ^:private test-token-rule 
      (def-rule-fn
@@ -113,25 +115,25 @@
    "main aacc loop. Provides :stop functionality and a separate token rule map"
    [state seq-tree] 
 
-   (if (not (:stop state))
+   (if (:stop state)
+       state
        (if (coll? (:content (first seq-tree)))
          (recur ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state seq-tree) (rest seq-tree)) 
          (if (seq seq-tree)
            (recur ((retrieve-token-rule (str (first seq-tree)) (:token-rule-map state)) (first seq-tree) state seq-tree) #_state (rest seq-tree))
-           state))
-        state))
+           state))))
 
 (defn aacc-looper-no-tok
   [state seq-tree]
   "main aacc loop, for programs with no literal token rules"
 
-   (if (not (:stop state))
+   (if (:stop state)
+       state
        (if (coll? (:content (first seq-tree)))
          (recur ((retrieve-rule seq-tree (:rule-map state)) (:tag (first seq-tree)) state seq-tree) (rest seq-tree)) 
          (if (seq seq-tree)
            (recur state (rest seq-tree))
-           state))
-        state))
+           state))))
 
 (defn aacc
   "actually a compiler compiler:

@@ -8,4 +8,5 @@
                  [com.novemberain/monger "1.5.0"]
                  [me.raynes/conch "0.5.0"]
                  [rhizome "0.1.6"]
+                 [swiss-arrows "0.6.0"]
                  ])
