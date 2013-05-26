@@ -1,0 +1,14 @@
+Nock = noun 		
+
+noun = (atom | noun) | cell
+
+cell = <WS>* <'['> <WS>* subject <WS>+ formula <WS>* <']'> <WS>* /
+	   <WS>* subject <WS>+ formula <WS*>
+
+subject = atom / cell
+
+formula = atom | cell
+
+atom = #'[0-9]+'
+
+<WS> = #'[\s]+'
