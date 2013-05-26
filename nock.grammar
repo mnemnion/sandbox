@@ -9,6 +9,7 @@ subject = atom / cell
 
 formula = atom | cell
 
-atom = #'[0-9]+'
+atom = <'['> <atom> <']'> | #'[0-9]+'
+
 
 <WS> = #'[\s]+'
