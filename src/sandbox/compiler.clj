@@ -115,24 +115,32 @@
                        (:tag (first ~'seq-tree)) 
                        ~'state 
                        ~'seq-tree) 
-                   (rest ~'seq-tree)))           
+                   (rest ~'seq-tree))) 
+                          
+
+                          
+(defmacro ^:private recur-on-token []
+           `(recur ((~'retrieve-token-rule (str (first ~'seq-tree)) (:token-rule-map ~'state)) 
+                     (first ~'seq-tree) 
+                     ~'state 
+                     ~'seq-tree)
+                   (rest ~'seq-tree))
+)
                              
 (defn aacc-looper
    "main aacc loop. Provides :stop functionality and a separate token rule map"
    [state seq-tree] 
-
    (if (:stop state)
        state
        (if (coll? (:content (first seq-tree)))
          (recur-on-rule) 
          (if (seq seq-tree)
-           (recur ((retrieve-token-rule (str (first seq-tree)) (:token-rule-map state)) (first seq-tree) state seq-tree) #_state (rest seq-tree))
+           (recur-on-token)
            state))))
 
 (defn aacc-looper-no-tok
-  [state seq-tree]
-  "main aacc loop, for programs with no literal token rules"
-
+   "main aacc loop, for programs with no literal token rules"
+   [state seq-tree]
    (if (:stop state)
        state
        (if (coll? (:content (first seq-tree)))
