@@ -1,4 +1,4 @@
-# instaparse.aacc
+# aacc
 
 Actually A Compiler Compiler. A backend to Instaparse that lets you do arbitrary things with a parse tree. 
 
@@ -58,7 +58,7 @@ Rules are defined like so:
 ; macroexpand-1 to:
 
 (fn 
- [rule-key state root seq-tree] 
+ [rule-key state seq-tree] 
  (println "I'm in the foo rule. I can access " (str rule-key) " among other things.") 
                                                                                state)
 ; then put it in a map:
@@ -69,33 +69,39 @@ Rules are defined like so:
 
 ##Behavior
 
-aacc **recur**sively walks the parse tree, repeatedly calling the rule functions. Rule functions defined with **def-rule-fn** have convenient access to four magic variables: **state**, **rule-key**, **root**, and **seq-tree**. the **rule-key** is the keyword which called the rule, **root** is the entire tree, and **seq-tree** is a sequence of the remaining tree to be walked. 
+aacc **recur**sively walks the parse tree, repeatedly calling the rule functions. Rule functions defined with **def-rule-fn** have convenient access to three magic variables: **state**, **rule-key**, and **seq-tree**. The **rule-key** is the keyword or token which called the rule, **seq-tree** is a sequence of the remaining tree to be walked, and **state** is returned by every rule.
 
 ```clojure
 (first (rest seq-tree) 
 ```
 will give you the next node on the tree, as expected. 
 
-All rule functions are expected to return state, in a useful fashion.
+All rule functions are expected to return **state**, in a useful fashion.
 
-**state** contains everything but the **seq-tree**, which ensures that aacc will exit unless a subrule contains an infinite loop. This means the value of **root**, **rule-map** and **token-map** may be dynamically changed by modifying the bindings of **:root-tree**, **:rule-map** or **:token-map** within the state map, with the changes reflected in the next iteration. 
+**state** contains everything but the **seq-tree**, which ensures that aacc will exit unless a subrule contains an infinite loop. This means the value of **rule-map** and **token-map** may be dynamically changed by modifying the bindings of **:rule-map** or **:token-map** within the state map, with the changes reflected in the next iteration. 
 
 aacc will exit immediately if the returned state map contains a value for the keyword **:stop**. **:error** is probably a good place to put things that go wrong, and **:warning** might be a nice location for warnings. 
 
-**:stop**, **:root-tree**, **:rule-map**, and **:token-map** are the only magic values in **state**. **:pause** and **:aacc-error** are reserved, but not used.  Modifying the value of **:root-tree** will not change the underlying tree-seq, which is baked in at run time and will walk the entire tree exactly once. Changing the mapping of **:root-tree** modifies any rule-based use of **root** subsequent to the change, but will not affect aacc's function directly. 
+**:stop**, **:root-tree**, **:rule-map**, and **:token-map** are the only magic values in **state**. **:pause**, **:aacc-error** and **:crash-only** are reserved, but not used. **:root-tree** contains the **tree** argument from the aacc call, not the seq, the original tree. Modifying the value of **:root-tree** will not change the underlying tree-seq, which is baked in at run time and will walk the entire tree exactly once.
 
 There are no magic keywords in the **rule-map** or **token-map**. These are the namespace of the language you're parsing, and it is hygenic: anything instaparse will accept as a rule name or literal token may be specified. 
 
-In many cases, a **token-map** is not necessary. If a grammar is designed so that all literal tokens are contained by a single rule, then (first (rest seq-tree)) will always deliver that token from that node. This is good practice in many cases, and the instaparse documentation provides a formula for compacting your trees in this fashion. aacc will run faster if you do not provide a **token-map**, because it will not look for a rule or execute **default-token-rule**. This also means that if an initial **token-map** is not provided, adding **:token-map** to **state** will not cause the resulting rules to be executed. If you want to dynamically load token rules as you find them, starting from nothing, provide an empty **token-map** when calling aacc.
+In many cases, a **token-map** is not necessary. If a grammar is designed so that all literal tokens are contained by a single rule, then **(frest seq-tree)** will always deliver that token from that node. This is good practice in many cases, and the instaparse documentation provides a formula for compacting your trees in this fashion. aacc will run faster if you do not provide a **token-map**, because it will not look for a rule or execute **default-token-rule**. This also means that if an initial **token-map** is not provided, adding **:token-map** to **state** will not cause the resulting rules to be executed. If you want to dynamically load token rules as you find them, starting from nothing, provide an empty **token-map** when calling aacc.
 
 If the rule map does not contain a particular keyword, the default rule, **aacc/default-rule**, is used. It returns state, doing nothing further. Literal tokens that are not matched by the token map call **aacc/default-token-rule**. Both of these may be overridden if necessary, in the following fashion:
 
 ```clojure
 (alter-var-root #'instaparse.aacc/default-rule (constantly new-rule))
 ```
-Where new-rule should be created with the def-rule-fn macro or provide the same magic variables. When **default-rule** or **default-token-rule** is called, it is passed the **:rule** keyword or literal string that calls it, just like a specified rule. That is to say, the value of **rule-key** in a rule function depends on the instaparse graph, not on the rule nor token maps.
+Where new-rule should be created with the **def-rule-fn** macro or provide the same magic variables. When **default-rule** or **default-token-rule** is called, it is passed the **:rule** keyword or literal string that calls it, just like a specified rule. That is to say, the value of **rule-key** in a rule function depends on the instaparse graph, not on the rule nor token maps.
 
-This allows rule functions to be generic, so that many types can be handled by a single rule. This is the only way to collect all literal tokens, which can be generated by regular expressions and are practically infinite in extent. Rules can also be threaded, though to do so, you must provide the magic variables directly. Threading from tail position will give the most predictable behavior. 
+This allows rule functions to be generic, so that many types can be handled by a single rule. This is the only way to collect all literal tokens, which can be generated by regular expressions and are practically infinite in extent. Rules may also be threaded with the **call-rule** macro, which does what you'd expect:
+
+```clojure
+(call-rule foo-rule) ; must be in a rule or otherwise provide [rule-key state seq-tree] bindings
+```
+
+Threading from tail position will give the most predictable behavior. 
 
 Note that aacc either recurs from tail position or returns state, and doesn't care what the rule expressed at the root node is. That means it may be called, recursively, on any node encountered during the walk, or on any tree generated by aacc rules, or passed into **state**. This will *not* consume the original tree-seq or modify it in any fashion: the original tree provided to any call of aacc is frozen and will be depth-first walked exactly once before returning state. 
 
@@ -121,9 +127,13 @@ aacc is meant to be performant, suitable for processing, for example, hundreds o
 
 aacc will already run faster if you don't provide a literal token map, which is unnecessary for many purposes as all literal tokens are available in the seq and can be utilized from the grammar rules. 
 
-Similarly, **:stop** may not be necessary if you want a crash-only compiler, and it would be nice to expose a faster, unsafe aacc that doesn't stop and check for **:stop**. I haven't done this, but if I do, you will be able to pass **{:crash-only true}** to the initial aacc state and aacc will remove it from **state** before running the unsafe version of the looper.  
+Similarly, **:stop** may not be necessary if you want a crash-only compiler, and it would be nice to expose a faster, unsafe aacc that doesn't stop and check for **:stop**. I haven't done this, but if I do, you will be able to pass **{:crash-only true}** to the initial aacc state and aacc will leave it in there so your rules can check which environment they're running in. 
+
+There is one command that is common and should be supported out of the loop. `{:drop n}`, added to `state`, would cause aacc to drop n tokens without calling any rules on them. If I add this, you'll have to activate it with a `{:drop true}` in `state`.
 
 At the moment, aacc only supports the enlive output format. This is because it's easy to work with and conceivably other key-value pairs could be profitably added to the tree before aacc does its thing. aacc only uses the **:tag** and **:content** keys, because that's all instaparse outputs, but additional key-value pairs in the enlive graph should not cause problems (this is worth verifying).
+
+I may want to add a set of standard utilities; these would be fragments of macro-defined code that assume they're inside an environment where the `->` macro has been called on `state`. That way a simple `aac.util/count` would expqnd into `(assoc ,,, :count (inc (:count state)))` where the commas are the expansion point for the `->` macro. `->` would have to explicitly be called; the expected structure of a rule is possibly a conditional or so, followed by one or more actions on `state`. If it's more than one, thread. 
 
 The hiccup output has the advantage that any vector within it is valid Clojure code. Enlive embeds literals strings in lists, which can be at the first position, causing an error; since hiccup uses vectors, anything can be at the first position. It would be good to support both formats, so that rules can be trivially called on any subsection of a tree, for diagnostic purposes. 
 
@@ -135,7 +145,6 @@ It would be quite nice to add a magic word **:pause** to the state machine, that
 
 ## TO DO
 
-update documentation to reflect the removal of the **root** magic variable. It's now in **state** where it belongs. 
 
 add error correction that causes the lack of a rule-map to cause aacc to push **:aacc-error true** into **state** and exit. Update documentation accordingly.
 
