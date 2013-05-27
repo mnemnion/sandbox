@@ -77,7 +77,7 @@ variants of `10` as equivalent.)
 
 So that's the what and why of Operator 10. For the simplest 10, one provides a Nock formula and an extra number. The Nock interpreter can use one or both of those things to return a value, as long as the value is the same as the value that the Nock formula would return if one actually executed it.
 
-Logically, a Nock interpreter can do two things with this hint: simply use it to produce the value, or use it to produce the value after first looking at the formula and confirming that yes, that formula is expected. Consider: if 42 is used as a subtraction function hint, and 56 as a multpily function hint. The Nock interpreter gets a 10 where b is 42, c is the decrement formula, and a are the numbers to be subtracted. 
+Logically, a Nock interpreter can do two things with this hint: simply use it to produce the value, or use it to produce the value after first looking at the formula and confirming that yes, that formula is expected. Consider: if 42 is used as a subtraction function hint, and 56 as a multpily function hint. The Nock interpreter gets a 10 where b is 42, c is the subtraction formula, and a are the numbers to be subtracted. 
 
 Whether or not the Nock interpreter looks at c, the result will be correct, so let's assume it doesn't. What happens if we pass it a 10 where b is 56, c is the decrement function, and a are the numbers to be...what exactly? subtracted? multiplied? A jetted Nock will produce the product and a non-jetted Nock will produce the difference. 
 
