@@ -10,7 +10,7 @@ One part of Nock is utterly mathematically fixed, and that is the definition of 
 
 Let us assume a slightly more complex data structure: a list of numbers. This is arguably a structure, and by imposing an arity of two on all functions it can be made to work for computation (the proof left as an exercise for John McCarthy). 
 
-But by imposing an arity of two on all functions we have imposed a structure, namely a singly linked list. Our ordered series of numbers could just as easily have represented key-value pairs, or a collection of independent data which can be arbitrarily sorted without loss of meaning. In other words, without arity or some other imposition, our list of numbers is data, not a data structure.
+But by imposing an arity of two on all functions we have imposed further structure, namely a singly linked list. Our ordered series of numbers could just as easily have represented key-value pairs, or a collection of independent data which can be arbitrarily sorted without loss of meaning. In other words, without arity or some other imposition, our list of numbers is data, not a data structure.
 
 Nock imposes a better structure, a binary tree, and embeds it in the fundamental specificaiton. This is better.
 
@@ -18,18 +18,17 @@ The rest of Nock is arbitrary in the sense that other representations for the sa
 
 Putting the macros before the fundamental operators would be perverse, of course, and I have no quarrel with @cgyarvin's ordering. I'm a Hermetic fussbudget and the urge is there, but I'm ignoring it. 
 
-Caveats: My understanding of Nock is by no means total. I have written a parser, but not yet an interpreter, because I am working on an industrial scale target acquisition and deployment system for the swatting of all flying creatures. I do not yet understand how Hoon works, but the scheme I'm proposing is so Hoon-compatible that it seems likely that Hoon is doing what I propose already. I have been unable to find references, or pieces of the Martian code that would confirm or deny this. 
-
-
-My objection to Operator 10 is more fundamental, and ultimately functional. I can make a strong case that hinting, the purpose of Operator 10, should not be necessary for jet-assisted Nock interpretation, and furthermore, that any use of Operator 10 for this purpose cannot simultaneously be more efficient than not using hinting and be honest in the sense that it at least checks your Nock code's structure before doing something nominally equivalent.
-
-What I can't ignore is my urge to shave an operator off, because 11 is one too many. It means that in ASCII representations of Nock code, indeed in Arabic numeral representations of Nock code, there is a fundamental operator that is two characters wide. That is just gratingly wrong in a way that almost makes my teeth hurt: the missed opportunities for code analysis are legion, and don't tell me this doesn't matter in practice because binary doesn't care about 9 vs 10. If that's how you feel what's wrong with targeting x86_64? It's plenty frozen and emulation will continue to work for the forseeable future. 
+What I can't ignore is my urge to shave an operator off, because 11 is one too many. It means that in ASCII representations of Nock code, indeed in Arabic numeral representations of Nock code, there is a fundamental operator that is two characters wide. That is just gratingly wrong in a way that almost makes my teeth hurt: the missed opportunities for code analysis are legion, and don't tell me this doesn't matter in practice because binary doesn't care about 9 vs 10. If that's how you feel, what's wrong with targeting x86_64? It's plenty frozen and emulation will continue to work for the forseeable future. 
 
 I grant immediately: this is a weak functional argument, if a strong aesthetic one. If I were merely nitpicking aesthetics, this would be annoying, jealous behavior, and I should be ignored or loudly booed. Nock should have 17 operators if that's the correct number to make it work, because any adoption of any Nock at all will be a qualitative leap in our power and ability as programmers. Objecting on the basis of Kabbalistic mumbo-jumbo, or even ASCII code-width, is cranky, in both senses of the word.
 
-I'm going to attempt a cogent functional case against Operator 10, in two parts: one, demonstrating that no such operator is needed for jet-propulsion of Nock code, and two, showing that the compression-oriented approach can only be faster than hinting if the Nock interpreter is to be honest. The third, weakest case is simply that 10 is a macro and can be completely discarded in favor of convention if one really decided one needed it.
+My objection to Operator 10 is more fundamental, and ultimately functional. I can make a strong case that hinting, the purpose of Operator 10, should not be necessary for jet-assisted Nock interpretation, and furthermore, that any use of Operator 10 for this purpose cannot simultaneously be more efficient than not using hinting and be honest in the sense that it at least checks your Nock code's structure before doing something nominally equivalent.
 
-First, let's look at Operator 10. Caveats: My understanding of Nock is by no means total, I have a working parser but no interpreter yet. Furthermore, I grok Hoon only poorly. I cannot tell if my proposal would break everything, but I hope at least that if Hoon is well designed (and I trust this), the breakage would be limited to the Nock/Jet region and would not extend to the syntax of Hoon code. 
+I'm going to attempt a cogent functional case against Operator 10, on two bases: one, demonstrating that no such operator is needed for jet-propulsion of Nock code, and two, showing that the compression-oriented approach can only be faster than hinting if the Nock interpreter is to be honest. The third, weakest case is simply that 10 is a macro and can be completely discarded in favor of convention if one really decided one needed it.
+
+Caveats: My understanding of Nock is by no means total. I have written a parser, but not yet an interpreter, because I am working on an industrial scale target acquisition and deployment system for the swatting of all flying creatures. I do not yet understand how Hoon works, but the scheme I'm proposing is so Hoon-compatible that it seems likely that Hoon is doing what I propose already. I have been unable to find references, or pieces of the Martian code that would confirm or deny this. 
+
+First, let's look at Operator 10. Again: My understanding of Nock is by no means total, I have a working parser but no interpreter yet. Furthermore, I grok Hoon only poorly. I cannot tell if my proposal would break everything, but I hope at least that if Hoon is well designed (and I trust this), the breakage would be limited to the Nock/Jet region and would not extend to the syntax of Hoon code. 
 
 ## What is this Operator 10? 
 
@@ -79,6 +78,28 @@ So that's the what and why of Operator 10. For the simplest 10, one provides a N
 Logically, a Nock interpreter can do two things with this hint: simply use it to produce the value, or use it to produce the value after first looking at the formula and confirming that yes, that formula is expected. Consider: if 42 is used as a subtraction function hint, and 56 as a multpily function hint. The Nock interpreter gets a 10 where b is 42, c is the decrement formula, and a are the numbers to be subtracted. 
 
 Whether or not the Nock interpreter looks at c, the result will be correct, so let's assume it doesn't. What happens if we pass it a 10 where b is 56, c is the decrement function, and a are the numbers to be...what exactly? subtracted? multiplied? A jetted Nock will produce the product and a non-jetted Nock will produce the difference. 
+
+That's not really acceptable; it's a Faustian pact that will hold so long as Faust is the only one who reads and writes the runes. Forget nasty code injection for a second: if that's how we want Nock to operate, why the formality of keeping the Nock algorithm around? It seems like a lot of padding, just to be able to hand-check erroneous output. 
+
+For Nock to be honest, it has to at least *glance* at the formula. A sidelong look should suffice. Execution is exactly what we're trying to avoid, but Nock is compiler generated, as @cgyarvin points out, and we need only make sure that the algorithm is in fact that generated by the compiler. We may then jet it with a comfortable degree of safety. 
+
+10 introduces hints which, to quote, "do not, and should not, appear in the Nock spec". In practice, without formula checking, this can produce undefined behavior by changing parts of a Nock noun which are formally uncomputed. We now have a theoretically undecidable state machine and there's no getting around this: I see no way that Nock can guarantee, as it should, that no modification of b in a 10 formula will produce a different result
+
+None except for formula verification, which sucks on the surface, because these formulas can get big and looking at them might take quite a bit longer than launching the jet. There's a way around this: fundamentally, this way is compression. 
+
+## Life without Operator 10
+
+I believe I have made the case that Operator 10 either produces a non-deterministic state machine in practice or requires verification of each and every formula that is hinted, before execution. There are ways to keep this from becoming a problem, particularly if we assume good-faith actors, which is comical; but this is math, so anything goes. 
+
+Can we make a fast Nock interpreter that uses no hinting at all? It happens that we can, and in the process, we stand to gain considerably. Here's an [interesting paper](http://arxiv.org/pdf/1304.7392v1.pdf). It's a good paper, because the abstract tells you everything you need to know, and the contents do not obfuscate, exceed, or contradict the abstract. 
+
+If you understand context-free grammars, what we're doing here is bloody simple. We're transforming a tree, which presumably contains many repeated subgraphs, into a context free grammar that will produce the tree given a simple binary left-right input. Since all rules terminate, no further structure is necessary: every atom is represented exactly once, and every repeated subgraph is represented as a path to those atoms.  
+
+That's hella tight bro! It's stupid simple and contains no gotchas at all for Nock's similarly moronic data structure. Any grammar rule with one resolution is structure, any with two is a variable. Hinting is actively harmful if this is how you've represented your code, because it adds entropic difference to your function call that you do not end up using. 
+
+Note that because this is a context free grammar, you can pre-load it with rules for matching trees. The practical application is that all jet-assisted formulas are pre-loaded at the top of the grammar, followed by all formulas generated by the Hoon kernel: This would make the byte-stream itself compatible with Hoon output, given front-loading with the additional rules needed. 
+
+Again, I have no idea if Hoon does this. But if it does, what's with the hinting? How could that be helpful if you can read a bytestream and know for sure what you're supposed to do with it? How could adding a variable, or even another constant, to that bytestream, assist in any fashion? 
 
 
 
