@@ -6,7 +6,9 @@ Nock is Kelvin versioned: this means changes to the specification are counted do
 
 Nothing much has changed between Nock 9K and Nock 5K. You can do a diff if you want: slight changes of symbol choice, an admirable increase in terseness, that's about it.
 
-One part of Nock is utterly mathematically fixed, and that is the definition of nouns, atoms and cells. It is the simplest possible finite data structure, which I will prove by contradiction. Let's assume a simpler data structure: a single number, untroubled by any further division. This is a datum, albeit a large one, and identity being the only operation on a set of one, computation is not possible without imposing a structure. 
+One part of Nock is utterly mathematically fixed, and that is the definition of nouns, atoms and cells. It is among the simplest possible finite data structures, that is, a data structure may be as simple but not simpler. This I will prove by contradiction. 
+
+Let's assume a simpler data structure: a single number, untroubled by any further division. This is a datum, albeit a large one, and identity being the only operation on a set of one, computation is not possible without imposing a structure. 
 
 Let us assume a slightly more complex data structure: a list of numbers. This is arguably a structure, and by imposing an arity of two on all functions it can be made to work for computation (the proof left as an exercise for John McCarthy). 
 
