@@ -10,9 +10,9 @@ One part of Nock is utterly mathematically fixed, and that is the definition of 
 
 Let's assume a simpler data structure: a single number, untroubled by any further division. This is a datum, albeit a large one, and identity being the only operation on a set of one, computation is not possible without imposing a structure. 
 
-Let us assume a slightly more complex data structure: a list of numbers. This is arguably a structure, and by imposing an arity of two on all functions it can be made to work for computation (the proof left as an exercise for John McCarthy). 
+Let us assume a slightly more complex data structure: a series of numbers. This is arguably a structure, and by imposing an arity of two on all functions it can be made to work for computation (the proof left as an exercise for John McCarthy). 
 
-But by imposing an arity of two on all functions we have imposed further structure, namely a singly linked list. Our ordered series of numbers could just as easily have represented key-value pairs, or a collection of independent data which can be arbitrarily sorted without loss of meaning. In other words, without arity or some other imposition, our list of numbers is data, not a data structure.
+But by imposing an arity of two on all functions we have imposed further structure, namely a list, or a vector in math terms. Our ordered series of numbers could just as easily have represented key-value pairs, or a collection of independent data which can be arbitrarily sorted without loss of meaning. In other words, without arity or some other imposition, our list of numbers is data, not a data structure.
 
 Nock imposes a better structure, a binary tree, and embeds it in the fundamental specificaiton. This is better.
 
