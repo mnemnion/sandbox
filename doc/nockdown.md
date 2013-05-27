@@ -26,7 +26,7 @@ My objection to Operator 10 is more fundamental, and ultimately functional. I ca
 
 I'm going to attempt a cogent functional case against Operator 10, on two bases: one, demonstrating that no such operator is needed for jet-propulsion of Nock code, and two, showing that the compression-oriented approach can only be faster than hinting if the Nock interpreter is to be honest. The third, weakest case is simply that 10 is a macro and can be completely discarded in favor of convention if one really decided one needed it.
 
-Caveats: My understanding of Nock is by no means total. I have written a parser, but not yet an interpreter, because I am working on an industrial scale target acquisition and deployment system for the swatting of all flying creatures. I do not yet understand how Hoon works, but the scheme I'm proposing is so Hoon-compatible that it seems likely that Hoon is doing what I propose already. I have been unable to find references, or pieces of the Martian code that would confirm or deny this. 
+Caveats: My understanding of Nock is by no means total. I have written a parser, but not yet an interpreter, because I am working on an industrial scale target acquisition and deployment system for the swatting of all flying creatures. I do not yet understand how Hoon works, but the scheme I'm proposing is so Martian that it seems possible that Hoon is doing what I propose already. I have been unable to find references, or pieces of the Martian code that would confirm or deny this. 
 
 First, let's look at Operator 10. Again: My understanding of Nock is by no means total, I have a working parser but no interpreter yet. Furthermore, I grok Hoon only poorly. I cannot tell if my proposal would break everything, but I hope at least that if Hoon is well designed (and I trust this), the breakage would be limited to the Nock/Jet region and would not extend to the syntax of Hoon code. 
 
@@ -36,7 +36,7 @@ The following is taken directly from the Crash Course:
 
 ***
 
-  29 ::    *[a 10 b c]       *[a c]
+    29 ::    *[a 10 b c]       *[a c]
 
 If `x` is an atom and `y` is a formula, the formula `[10 x y]` 
 appears to be equivalent to... `y`.  For instance:
@@ -101,5 +101,20 @@ Note that because this is a context free grammar, you can pre-load it with rules
 
 Again, I have no idea if Hoon does this. But if it does, what's with the hinting? How could that be helpful if you can read a bytestream and know for sure what you're supposed to do with it? How could adding a variable, or even another constant, to that bytestream, assist in any fashion? 
 
+##Advantages
+
+I have perhaps overstated the case against Operator 10. It's true we must verify the code, but we only have to do it once. We can then hash it and store the signature, and check real quick that nothing has messed with our magic hints. 
+
+That requires us to look at the entire codebase once, every time we load it, before we launch it. That could conceivably be costly. The code analysis step is longer, but it's part of compilation, so no big deal. 
+
+We would have to do this anyway, in any case where preventing malicious code was important. If we have other securities in that regard, we can skip this step. 
+
+Also, these Nock files are going to be pretty big, and filled with repeated subgraphs that are no longer being looked at. My trigger finger is itching to compress anyway, so what do we get out of it? 
+
+Well, to verify all the jet-assisted code, we look at the front of the file and verify it against the checksum. To verify all of the Hoon kernel code, we look at more of the front of the file. Verification of the application-specific code is impossible without execution, but we can continue on to hash the entire file if we merely want surety that it's the same file we looked at last time (or at minimum that our attacker changed the file, hashed it, and put the hash where we'd expect to find it). 
+
+What we'd actually execute is not Nock, but Nockdown: partially compressed Nock, where the parts that stay compressed are jet-assisted and the parts that are unrolled are not. We transfer nck, which is fully compressed Nock, but generally keep applications around as Nockdown, so we can directly load into memory instead of hand-unrolling on the fly.  Unrolling into pure Nock is necessary only when slowing jets for systems development purposes. 
+
+A Hoon specific Nock interpreter will use an even more optimized Nockdown, trading off compression against execution speed to tune performance. Since any Nockdown can be fully unrolled, this should provide the compatibility we're looking for, and look ma! There are no hints, and hence, no magic, only two invisible lines in the grammar rules advising boundaries for soft and hard jetting.  
 
 
