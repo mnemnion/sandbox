@@ -33,6 +33,47 @@ First, let's look at Operator 10. Caveats: My understanding of Nock is by no mea
 
 ## What is this Operator 10? 
 
+The following is taken directly from the Crash Course:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  29 ::    *[a 10 b c]       *[a c]
+
+If `x` is an atom and `y` is a formula, the formula `[10 x y]` 
+appears to be equivalent to... `y`.  For instance:
+
+	~tasfyn-partyv> .*([132 19] [10 37 [4 0 3]])
+	20
+
+Why would we want to do this?  `10` is actually a hint operator.
+The `37` in this example is discarded information - it is not
+used, formally, in the computation.  It may help the interpreter
+compute the expression more efficiently, however.
+
+Every Nock computes the same result - but not all at the same
+speed.  What hints are supported?  What do they do?  Hints are a
+higher-level convention which do not, and should not, appear in
+the Nock spec.  Some are defined in Hoon.  Indeed, a naive Nock
+interpreter not optimized for Hoon will run Hoon quite poorly.
+When it gets the product, however, the product will be right.
+
+There is another reduction for hints - line 30:
+
+	30 ::    *[a 10 [b c] d]   *[a 8 c 7 [0 2] d]
+
+Once we see what `7` and `8` do, we'll see that this complex hint
+throws away an arbitrary `b`, but computes the formula `c`
+against the subject and... throws away the product.  This formula
+is simply equivalent to `d`.  Of course, in practice the product
+of `c` will be put to some sordid and useful use.  It could even
+wind up as a side effect, though we try not to get _that_ sordid.
+
+(Why do we even care that `c` is computed?  Because `c` could
+crash.  A correct Nock cannot simply ignore it, and treat both
+variants of `10` as equivalent.)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 
 
