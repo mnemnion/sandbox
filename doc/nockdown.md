@@ -18,6 +18,12 @@ The rest of Nock is arbitrary in the sense that other representations for the sa
 
 Putting the macros before the fundamental operators would be perverse, of course, and I have no quarrel with @cgyarvin's ordering. I'm a Hermetic fussbudget and the urge is there, but I'm ignoring it. 
 
+Caveats: My understanding of Nock is by no means total. I have written a parser, but not yet an interpreter, because I am working on an industrial scale target acquisition and deployment system for the swatting of all flying creatures. I do not yet understand how Hoon works, but the scheme I'm proposing is so Hoon-compatible that it seems likely that Hoon is doing what I propose already. I have been unable to find references, or pieces of the Martian code that would confirm or deny this. 
+
+## What is this Operator 10? 
+
+
+
 My objection to Operator 10 is more fundamental, and ultimately functional. I can make a strong case that hinting, the purpose of Operator 10, should not be necessary for jet-assisted Nock interpretation, and furthermore, that any use of Operator 10 for this purpose cannot simultaneously be more efficient than not using hinting and be honest in the sense that it at least checks your Nock code's structure before doing something nominally equivalent.
 
 What I can't ignore is my urge to shave an operator off, because 11 is one too many. It means that in ASCII representations of Nock code, indeed in Arabic numeral representations of Nock code, there is a fundamental operator that is two characters wide. That is just gratingly wrong in a way that almost makes my teeth hurt: the missed opportunities for code analysis are legion, and don't tell me this doesn't matter in practice because binary doesn't care about 9 vs 10. If that's how you feel what's wrong with targeting x86_64? It's plenty frozen and emulation will continue to work for the forseeable future. 
