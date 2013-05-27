@@ -18,7 +18,7 @@ Nock imposes a better structure, a binary tree, and embeds it in the fundamental
 
 The rest of Nock is arbitrary in the sense that other representations for the same transformations could be chosen. That is, parens could associate to the left, turning `[a b c]` into `[[[a] b] c]`, and this would be fine. Technically, any permutation on the 11 operators provided would function in the same fashion, and it would be trivial to translate real-life codebases with a little cryptanalysis, even if the permutation wasn't known. 
 
-Putting the macros before the fundamental operators would be perverse, of course, and I have no quarrel with @cgyarvin's ordering. I'm a Hermetic fussbudget and the urge is there, but I'm ignoring it. 
+Putting the macros before the fundamental operators would be perverse, of course, and I have no quarrel with @cgyarvin's ordering. I'm a Hermetic fussbudget and the urge is there, but I'm ignoring it. 0 for Yes and 1 for No is funky-fresh, and I kinda dig it.
 
 What I can't ignore is my urge to shave an operator off, because 11 is one too many. It means that in ASCII representations of Nock code, indeed in Arabic numeral representations of Nock code, there is a fundamental operator that is two characters wide. That is just gratingly wrong in a way that almost makes my teeth hurt: the missed opportunities for code analysis are legion, and don't tell me this doesn't matter in practice because binary doesn't care about 9 vs 10. If that's how you feel, what's wrong with targeting x86_64? It's plenty frozen and emulation will continue to work for the forseeable future. 
 
