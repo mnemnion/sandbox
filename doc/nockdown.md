@@ -79,7 +79,7 @@ So that's the what and why of Operator 10. For the simplest 10, one provides a N
 
 Logically, a Nock interpreter can do two things with this hint: simply use it to produce the value, or use it to produce the value after first looking at the formula and confirming that yes, that formula is expected. A third option is executing the formula but ignoring the hint, which rather defeats the purpose. Consider:  42 is used as a subtraction function hint, and 56 as a multiply function hint. The Nock interpreter gets a 10 where b is 42, c is the subtraction formula, and a are the numbers to be subtracted. 
 
-Whether or not the Nock interpreter looks at c, the result will be correct, so let's assume it doesn't. What happens if we pass it a 10 where b is 56, c is the decrement function, and a are the numbers to be...what exactly? subtracted? multiplied? A jetted Nock will produce the product and a non-jetted Nock will produce the difference. 
+Whether or not the Nock interpreter looks at c, the result will be correct, so let's assume it doesn't. What happens if we pass it a 10 where b is 56, c is the subtraction formula, and a are the numbers to be...what exactly? subtracted? multiplied? A jetted Nock will produce the product and a non-jetted Nock will produce the difference. 
 
 That's not really acceptable; it's a Faustian pact that will hold so long as Faust is the only one who reads and writes the runes. Forget nasty code injection for a second: if that's how we want Nock to operate, why the formality of keeping the Nock algorithm around? It seems like a lot of padding, just to be able to hand-check erroneous output. 
 
