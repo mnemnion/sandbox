@@ -63,3 +63,23 @@ This looks like a useful tool:
 
 
 To push down the changes into the various major modes. If I smash something I want, I move it. 
+
+##Blackboxing
+
+I'm jealous of the space around the gizmo keys. I'm a leftie so left-hand chords are particularly felicitous. 
+
+```lisp
+
+C-z suspend-frame
+
+M-z zap-to-char
+
+````
+
+that's what we like to call "wasted space".
+
+```lisp
+(global-set-key (kbd "C-z") 'keyboard-quit)
+```
+
+That's more like it. Frak, copying and pasting code is so 80s. I need to get Marmion working stat.
