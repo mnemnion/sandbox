@@ -20,5 +20,10 @@ Part of why I've avoided the cult of Emacs is that using the arrow keys, if the 
 
 I not only do not care, I am actively hostile to this point of view. Arrows are on my keyboard so I can move around; letters are for things that might be letter like in some way, like "S"aving a file or whatnot. 
 
-So I've got hyper (aka "fn"), control, meta (alt/option/names-all-day), and command aka super. My general principle, as I make sense out of this mess, is that hyper is for me, command is for the Mac, and control and meta belong to the larger Emacs community. I'll fiddle with them, in particular, I do not need 90% of the control nav commands.
+So I've got hyper (aka "fn"), control, meta (alt/option/names-all-day), and command aka super. My general principle, as I make sense out of this mess, is that hyper is for me, command is for the Mac, and control and meta belong to the larger Emacs community. I'll fiddle with them, in particular, I do not need any of the letter currently given over to navigation, at least the ones that overload the arrow keys.
+
+meta-etc moves by word as installed, which is great. command-etc need to be beginning-of-line, end-of-line, up-page, and down-page respectively. Control right and left should cycle focus through the visible buffers. 
+
+
+
 
