@@ -1,12 +1,10 @@
 #The EMACS Liberation File
 
-So here I find myself, editing code in Emacs. I suspected this day would arrive. I have long resisted, thanks to the residual taste of many bad experiences. Finally tackling it became inevitable the day I fell for Lisp. The way things stand, Emacs is a corrolary of Lisp, an implication of it. People come to this cathedral for many reason, mine is chiefly the Way of Lisp. 
-
+Here I find myself, editing code in Emacs. I suspected this day would arrive. I have long resisted, thanks to the residual taste of many bad experiences. Finally tackling it became inevitable the day I fell for Lisp. The way things stand, Emacs is a corrolary of Lisp, an implication of it. 
 
 Emacs is not an editor. Vim is an editor, as is Sublime Text, which I use when (mere) editing is the task at hand. Had I a taste for Vim, things might be different. But I do not. Admiration yes; taste, :q. 
 
-Emacs is an magic spell written largely by an old and somewhat grumpy wizard. We owe this wizard a lot. Fact is, though, if it weren't for Emacs Live I think I'd still be choking on frustration and rage. 
-
+Emacs is an magic spell written by an old and somewhat grumpy wizard. We owe this wizard a lot. Fact is, though, if it weren't for Emacs Live I think I'd still be choking on frustration and rage. 
 
 Emacs Live got me through the seeing red phase. The next task is to liberate this beast for my own purposes. Emacs is a living, breathing creature, a familiar of sorts. The Emacs you get out of the box, that's Stallman's Emacs. The Emacs you get with Emacs Live is Sam Aaron's Emacs. 
 
@@ -18,7 +16,7 @@ So check it. I'm Emacsin from a basically Mac environment and don't see that cha
 
 Part of why I've avoided the cult of Emacs is that using the arrow keys, if the tutorials are to be believed, is some kind of sin against the Holy Spirit. It makes the fingers leave the home row. Oh snap! 
 
-I not only do not care, I am actively hostile to this point of view. Arrows are on my keyboard so I can move around; letters are for things that might be letter like in some way, like "S"aving a file or whatnot. 
+I not only do not care, I am actively hostile to this point of view. Arrows are on my keyboard so I can move around; letters are for things that might be letter like in some way, like "S"aving a file or whatnot. I even use the trackpad, which is admittedly comical in Emacs and not a habit I intend to get into.
 
 So I've got hyper (aka "fn"), control, meta (alt/option/names-all-day), and command aka super. My general principle, as I make sense out of this mess, is that hyper is for me, command is for the Mac, and control and meta belong to the larger Emacs community. I'll fiddle with them, in particular, I do not need any of the letter currently given over to navigation, at least the ones that overload the arrow keys.
 
@@ -43,6 +41,3 @@ I keep forgetting. This is supposed to be source code as well as rant. So here's
 That first one, that's a wizard achievement unlocked thanks to [Xah Lee](http://addme.com). `hyper` is not widely used in Emacs land, I gather it's kept on the shelf as a user namespace. Good. If I find things in it, I'll put them somewhere else. 
 
 The restart key is for ECL. I should make it modal at some point.
-
-
-
