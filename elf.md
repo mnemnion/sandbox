@@ -41,3 +41,25 @@ I keep forgetting. This is supposed to be source code as well as rant. So here's
 That first one, that's a wizard achievement unlocked thanks to [Xah Lee](http://addme.com). `hyper` is not widely used in Emacs land, I gather it's kept on the shelf as a user namespace. Good. If I find things in it, I'll put them somewhere else. 
 
 The restart key is for ECL. I should make it modal at some point.
+
+This looks like a useful tool:
+
+```lisp
+(defvar my-keys-minor-mode-map (make-keymap) "my-keys-minor-mode keymap.")
+
+(define-key my-keys-minor-mode-map (kbd "C-i") 'some-function)
+
+(define-minor-mode my-keys-minor-mode
+  "A minor mode so that my key settings override annoying major modes."
+  t " my-keys" 'my-keys-minor-mode-map)
+
+(my-keys-minor-mode 1)
+
+(defun my-minibuffer-setup-hook ()
+  (my-keys-minor-mode 0))
+
+(add-hook 'minibuffer-setup-hook 'my-minibuffer-setup-hook)
+```
+
+
+To push down the changes into the various major modes. If I smash something I want, I move it. 
