@@ -30,6 +30,19 @@ Emacs Live as configured preserves an alarming property of emacsen generally: na
 
 Emacs is fully loaded and pointed in every possible direction. Emacs Live only adds to this happy chaos. At some point I have to actually field strip this puppy. 
 
+I keep forgetting. This is supposed to be source code as well as rant. So here's the wee kernel of the ELF:
+
+```lisp
+;;@man Hyper Button
+(setq ns-function-modifier 'hyper)
+
+;;@man Key Bindings
+(global-set-key (kbd "H-x") 'slime-restart-inferior-lisp)
+```
+
+That first one, that's a wizard achievement unlocked thanks to [Xah Lee](http://addme.com). `hyper` is not widely used in Emacs land, I gather it's kept on the shelf as a user namespace. Good. If I find things in it, I'll put them somewhere else. 
+
+The restart key is for ECL. I should make it modal at some point.
 
 
 
