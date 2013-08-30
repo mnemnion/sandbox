@@ -80,6 +80,14 @@ that's what we like to call "wasted space".
 
 ```lisp
 (global-set-key (kbd "C-z") 'keyboard-quit)
+
+
+;;navigation
+(global-set-key (kbd "s-<left>") 'move-beginning-of-line)
+(global-set-key (kbd "s-<right>") 'move-end-of-line)
+;;
+
+
 ```
 
-That's more like it. Frak, copying and pasting code is so 80s. I need to get Marmion working stat.
+These 'global-set-keys' need to be turned into a minor mode ASAP. 
