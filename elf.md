@@ -22,7 +22,13 @@ I not only do not care, I am actively hostile to this point of view. Arrows are 
 
 So I've got hyper (aka "fn"), control, meta (alt/option/names-all-day), and command aka super. My general principle, as I make sense out of this mess, is that hyper is for me, command is for the Mac, and control and meta belong to the larger Emacs community. I'll fiddle with them, in particular, I do not need any of the letter currently given over to navigation, at least the ones that overload the arrow keys.
 
-meta-etc moves by word as installed, which is great. command-etc need to be beginning-of-line, end-of-line, up-page, and down-page respectively. Control right and left should cycle focus through the visible buffers. 
+meta-etc moves by word as installed, which is great. command-etc need to be beginning-of-line, end-of-line, up-page, and down-page respectively. Control right and left should cycle focus through the visible buffers. Control up and down, top and bottom of buffer. Hyper-etc will be paredit, slurp and barf on x or y. Still figuring that business out. 
+
+##Tidying Up
+
+Emacs Live as configured preserves an alarming property of emacsen generally: namely, if you press control or meta anything, at all, it will probably do something, and God help you. The reason our quest will one day lead beyond emacs is simple: there is no "oops" command, which does its level best to undo whatever command you just entered, and there never will be.
+
+Emacs is fully loaded and pointed in every possible direction. Emacs Live only adds to this happy chaos. At some point I have to actually field strip this puppy. 
 
 
 
