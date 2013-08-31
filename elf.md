@@ -94,3 +94,5 @@ These 'global-set-keys' need to be turned into a minor mode ASAP.
 
 useful http://stackoverflow.com/questions/13965966/unset-key-binding-in-emacs
 
+advice: http://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html
+
