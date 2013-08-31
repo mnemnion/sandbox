@@ -79,14 +79,36 @@ M-z zap-to-char
 that's what we like to call "wasted space".
 
 ```lisp
-(global-set-key (kbd "C-z") 'keyboard-quit)
-
-
-;;navigation
-(global-set-key (kbd "s-<left>") 'move-beginning-of-line)
-(global-set-key (kbd "s-<right>") 'move-end-of-line)
+;;; Navigation
 ;;
+;; The Rule of the Arrow
+;;
+;; The arrow keys will do the same thing, always. The 'elf is quite specific about this.
+;;
+;; Even hyper arrow is not in user space. This is the only hyper exception. Hyper arrows are minor
+;; modal. All other arrow functions apply everywhere.
+;;
+;; Currently the minibuffer is an exception. Tune as appropriate.
 
+(define-key sane-0-minor-mode-map (kbd "<up>") 'previous-line)
+(define-key sane-0-minor-mode-map (kbd "<down>") 'next-line)
+(define-key sane-0-minor-mode-map (kbd "<left>") 'left-char)
+(define-key sane-0-minor-mode-map (kbd "<right>") 'right-char)
+
+(define-key sane-0-minor-mode-map (kbd "s-<up>") 'beginning-of-buffer)
+(define-key sane-0-minor-mode-map (kbd "s-<down>") 'end-of-buffer)
+(define-key sane-0-minor-mode-map (kbd "s-<left>") 'move-beginning-of-line)
+(define-key sane-0-minor-mode-map (kbd "s-<right>") 'move-end-of-line)
+
+(define-key sane-0-minor-mode-map (kbd "M-<up>") 'backward-paragraph)
+(define-key sane-0-minor-mode-map (kbd "M-<down>") 'forward-paragraph)
+(define-key sane-0-minor-mode-map (kbd "M-<left>") 'left-word)
+(define-key sane-0-minor-mode-map (kbd "M-<right>") 'right-word)
+
+(define-key sane-0-minor-mode-map (kbd "C-<up>") 'cua-scroll-down)
+(define-key sane-0-minor-mode-map (kbd "C-<down>") 'cua-scroll-up)
+(define-key sane-0-minor-mode-map (kbd "C-<left>") 'win-switch-dispatch)
+(define-key sane-0-minor-mode-map (kbd "C-<right>") 'win-switch-dispatch)
 
 ```
 
