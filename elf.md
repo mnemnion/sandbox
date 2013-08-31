@@ -91,3 +91,6 @@ that's what we like to call "wasted space".
 ```
 
 These 'global-set-keys' need to be turned into a minor mode ASAP. 
+
+useful http://stackoverflow.com/questions/13965966/unset-key-binding-in-emacs
+
